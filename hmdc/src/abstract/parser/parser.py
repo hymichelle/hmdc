@@ -5,17 +5,18 @@ from src.debug import *
 
 from collections import deque
 import sys
+import re
 
 class AbstractParser(object):
     ''' an abstract parser to convert tokens into build instruction code.
     + grammar {AbstractAutomataMachine} -- grammar to check and parse tokens.
     '''
 
-    def __init__(self, grammar, variables={}):
+    def __init__(self, grammar):
 
         # grammar
         self.grammar = grammar.get_automata()
-        self.variables = variables
+        self.variables = {}
 
         # stacks
         self.q_t = deque([None, None], maxlen=2) # circular queue
@@ -45,8 +46,30 @@ class AbstractParser(object):
 
         # check definition construction
         token_peek, token_end = [tokens[0], tokens[-1]]
-        if token_peek.type is 'RULE_BEGIN' and token_end.type is 'RULE_END': pass
-        elif token_peek.type is 'VARIABLE_IDENTIFIER': pass
+        if token_peek.type == 'RULE_BEGIN' and token_end.type == 'RULE_END': pass
+
+        # parse variable
+        elif token_peek.type == 'VARIABLE_IDENTIFIER':
+            tmp = "".join([ token.value for token in tokens ])
+
+            # retrieval or assignment
+            if not '=' in tmp and re.findall("^\$[A-Za-z]+", tmp)[0][1:].strip() in self.variables.keys():
+                # replace
+                pass
+
+            # variable identifier
+            try: var_head = re.findall("^\$[A-Za-z]+", tmp)[0][1:]
+            except IndexError:
+                debug('w', "SYNTAX ERROR: variable must be alphabet only.\n")
+                sys.exit(1)
+
+            # variable definition
+            try: var_tail = tmp[tmp.index('=')+1:tmp.index('#')] # comment
+            except ValueError: var_tail = tmp[tmp.index('=')+1:]
+
+            # store variable
+            self.variables[var_head.strip()] = var_tail.strip()
+            return True
         else:
             self.q_t.append(token_peek) # debug
             self.q_t.append(token_end) # debug
@@ -60,8 +83,6 @@ class AbstractParser(object):
             # check syntax
             if not self.__is_valid_syntax():
                 self.__throw_syntax_error()
-
-            # parse variables
 
             # consolidate tokens
             self.__consolidate_tokens(token)
