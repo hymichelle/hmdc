@@ -29,7 +29,10 @@ class AbstractParser(object):
     # public
     #
 
-    def parse(self, tokens):
+    def parse(self, tokens=[]):
+        ''' prototype to parse single or multiple tokens.
+        + tokens {list|list[list]} -- list or nested lists of tokens.
+        '''
         return self.__parse_definition(tokens)
 
     #
@@ -44,40 +47,54 @@ class AbstractParser(object):
             debug('w', "TOKEN ERROR: not enough tokens to parse.\n")
             sys.exit(1)
 
-        # definition construction
+        var = "".join([ token.value for token in tokens ])
         token_peek, token_end = [tokens[0], tokens[-1]]
-        if token_peek.type == 'RULE_BEGIN' and token_end.type == 'RULE_END': pass
+
+        # definition construction
+        if token_peek.type == 'RULE_BEGIN' and token_end.type == 'RULE_END':
+            self.__parse_tokens(tokens)
 
         # variable
-        elif token_peek.type == 'VARIABLE_IDENTIFIER':
-
-            var = "".join([ token.value for token in tokens ])
+        elif '$' in var:
 
             # variable identifier
-            try: v_i = re.findall("^\$[A-Za-z]{1}\w*", var)[0][1:].strip()
+            try: v_i = re.findall("\$[A-Za-z]{1}\w*", var)[0].strip()
             except IndexError:
-                debug('w', "SYNTAX ERROR: variable must be alphabet only.\n")
+                debug('w', "SYNTAX ERROR: variable must be alphanumeric only.\n")
                 sys.exit(1)
 
             # retrieval?
-            if not '=' in var and v_i in self.variables.keys():
-                # replace
-                pass
+            if not '=' in var:
 
-            # variable definition
-            try: v_t = var[var.index('=')+1:var.index('#')] # comment
-            except ValueError: v_t = var[var.index('=')+1:]
+                if v_i in self.variables.keys():
+                    tokens = var[:var.index(v_i)] + self.variables[v_i] + var[var.index(v_i)+len(v_i):]
+                    self.__parse_tokens(tokens)
 
-            # store variable
-            self.variables[v_i] = v_t.strip()
-            return True
+                else:
+                    debug('w', "'%s' is not defined.\n" % v_i)
+                    sys.exit(1)
+
+            # definition?
+            else:
+                try: v_d = var[var.index('=')+1:var.index('#')] # comment
+                except ValueError: v_d = var[var.index('=')+1:]
+                self.variables[v_i] = v_d.strip()
+
+        # error
         else:
             self.q_t.append(token_peek) # debug
             self.q_t.append(token_end) # debug
             self.__throw_syntax_error()
 
-        # populate definition
-        self.q_t.append(token_peek)
+    def __parse_tokens(self, tokens=[]):
+        ''' prototype to parse tokens and add to code instruction.
+        + tokens {list} -- list of tokens from lexer.
+        '''
+        if len(tokens) < 2:
+            debug('w', "TOKEN ERROR: not enough tokens to parse.\n")
+            sys.exit(1)
+
+        self.q_t.append(tokens[0])
         for token in tokens[1::]:
             self.q_t.append(token)
 
@@ -89,9 +106,8 @@ class AbstractParser(object):
             self.__consolidate_tokens(token)
 
         # add instruction
-        self.code.append(self.q_b[:])
+        self.code.append("".join(self.q_b[:]))
         self.q_b[:] = [] # clear
-        return True
 
     def __is_valid_syntax(self):
         ''' prototype to check for transition correctness.
@@ -127,4 +143,4 @@ class AbstractParser(object):
 
     def __print_stack(self):
         sys.stdout.write("=> CURRENT TOKEN: %s\n" % (self.q_t[0] or {}) + \
-                         "=> NEXT TOKEN:    %s\n" % (self.q_t[1] or {}))
+                         "=> *NEXT TOKEN:   %s\n" % (self.q_t[1] or {}))
