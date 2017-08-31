@@ -44,31 +44,32 @@ class AbstractParser(object):
             debug('w', "TOKEN ERROR: not enough tokens to parse.\n")
             sys.exit(1)
 
-        # check definition construction
+        # definition construction
         token_peek, token_end = [tokens[0], tokens[-1]]
         if token_peek.type == 'RULE_BEGIN' and token_end.type == 'RULE_END': pass
 
-        # parse variable
+        # variable
         elif token_peek.type == 'VARIABLE_IDENTIFIER':
-            tmp = "".join([ token.value for token in tokens ])
 
-            # retrieval or assignment
-            if not '=' in tmp and re.findall("^\$[A-Za-z]+", tmp)[0][1:].strip() in self.variables.keys():
-                # replace
-                pass
+            var = "".join([ token.value for token in tokens ])
 
             # variable identifier
-            try: var_head = re.findall("^\$[A-Za-z]+", tmp)[0][1:]
+            try: v_i = re.findall("^\$[A-Za-z]{1}\w*", var)[0][1:].strip()
             except IndexError:
                 debug('w', "SYNTAX ERROR: variable must be alphabet only.\n")
                 sys.exit(1)
 
+            # retrieval?
+            if not '=' in var and v_i in self.variables.keys():
+                # replace
+                pass
+
             # variable definition
-            try: var_tail = tmp[tmp.index('=')+1:tmp.index('#')] # comment
-            except ValueError: var_tail = tmp[tmp.index('=')+1:]
+            try: v_t = var[var.index('=')+1:var.index('#')] # comment
+            except ValueError: v_t = var[var.index('=')+1:]
 
             # store variable
-            self.variables[var_head.strip()] = var_tail.strip()
+            self.variables[v_i] = v_t.strip()
             return True
         else:
             self.q_t.append(token_peek) # debug
