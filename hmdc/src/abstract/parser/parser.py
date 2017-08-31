@@ -44,7 +44,7 @@ class AbstractParser(object):
         + tokens {list} -- list of tokens from lexer.
         '''
         if len(tokens) < 2:
-            debug('w', "TOKEN ERROR: not enough tokens to parse.\n")
+            debug('w', "PARSER ERROR: there must be 2+ tokens to parse into matrix.\n")
             sys.exit(1)
 
         var = "".join([ token.value for token in tokens ])
@@ -60,7 +60,7 @@ class AbstractParser(object):
             # variable identifier
             try: v_i = re.findall("\$[A-Za-z]{1}\w*", var)[0].strip()
             except IndexError:
-                debug('w', "SYNTAX ERROR: variable must be alphanumeric only.\n")
+                debug('w', "SYNTAX ERROR: variable must be alphanumeric + '_' only.\n")
                 sys.exit(1)
 
             # retrieval?
@@ -71,7 +71,7 @@ class AbstractParser(object):
                     self.__parse_tokens(tokens)
 
                 else:
-                    debug('w', "'%s' is not defined.\n" % v_i)
+                    debug('w', "variable '%s' is not defined.\n" % v_i)
                     sys.exit(1)
 
             # definition?
@@ -93,7 +93,7 @@ class AbstractParser(object):
         + tokens {list} -- list of tokens from lexer.
         '''
         if len(tokens) < 2:
-            debug('w', "TOKEN ERROR: not enough tokens to parse.\n")
+            debug('w', "PARSER ERROR: there must be 2+ tokens to parse into matrix.\n")
             sys.exit(1)
 
         self.q_t.append(tokens[0])
@@ -135,7 +135,7 @@ class AbstractParser(object):
     def __throw_syntax_error(self, tokens=[]):
         ''' print syntax error message.
         '''
-        debug('w', "SYNTAX ERROR: 'NEXT TOKEN' is not valid:\n")
+        debug('w', "SYNTAX ERROR: 'next' token is not a valid definition or transition:\n")
         self.__print_stack()
         sys.exit(1)
 
@@ -144,5 +144,5 @@ class AbstractParser(object):
     #
 
     def __print_stack(self):
-        sys.stdout.write("=> CURRENT TOKEN: %s\n" % (self.q_t[0] or {}) + \
-                         "=> *NEXT TOKEN:   %s\n" % (self.q_t[1] or {}))
+        sys.stdout.write("=> curret: %s\n" % (self.q_t[0] or {}) + \
+                         "=> next:   %s\n" % (self.q_t[1] or {}))
