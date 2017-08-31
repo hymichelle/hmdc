@@ -62,25 +62,34 @@ class AbstractParser(object):
         if '$' in var:
 
             # variable identifier
-            try: v_i = re.findall("\$[A-Za-z]{1}\w*", var)[0].strip()
+            try:
+                variables = set(map(lambda x:x.strip(), re.findall("\$[A-Za-z]{1}\w*", var)))
             except IndexError:
                 debug('w', "SYNTAX ERROR: variable must be alphanumeric + '_' only.\n")
                 sys.exit(1)
 
-            # retrieval?
-            if not '=' in var:
-                if v_i in self.variables.keys():
-                    tokens = tokens[:var.index(v_i)] + self.variables[v_i] + tokens[var.index(v_i)+len(v_i):]
-                    self.__parse_tokens(tokens)
-                else:
-                    debug('w', "variable '%s' is not defined.\n" % v_i)
-                    sys.exit(1)
+            for v_i in variables:
 
-            # definition?
-            else:
-                try: v_d = tokens[var.index('=')+1:var.index('#')] # comment
-                except ValueError: v_d = tokens[var.index('=')+1:]
-                self.variables[v_i] = v_d
+                # retrieval?
+                if not '=' in var:
+                    if v_i in self.variables.keys():
+
+                        # substitute multiple occurances
+                        index = [ x.start() for x in re.finditer('\%s' % v_i, var) ] # escape '\$'
+                        for i in index:
+                            tokens = tokens[:i] + self.variables[v_i] + tokens[i+len(v_i):]
+
+                        # inject only once
+                        self.__parse_tokens(tokens)
+                    else:
+                        debug('w', "variable '%s' is not defined.\n" % v_i)
+                        sys.exit(1)
+
+                # definition?
+                else:
+                    try: v_d = tokens[var.index('=')+1:var.index('#')] # comment
+                    except ValueError: v_d = tokens[var.index('=')+1:]
+                    self.variables[v_i] = v_d
 
         # definition construction
         elif token_peek.type == 'RULE_BEGIN' and token_end.type == 'RULE_END':

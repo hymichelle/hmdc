@@ -21,6 +21,7 @@ class HMDGrammar(object):
                     'SPACE',
                     'RULE_END',
                     'GRAMMAR_OR',
+                    'VARIABLE_IDENTIFIER',
                     'VARIABLE_ASSIGNMENT'
                 ]
             )
@@ -83,7 +84,8 @@ class HMDGrammar(object):
                 state='RULE_END',
                 basetype='EXPRESSION',
                 transition=[
-                    'RULE_BEGIN'
+                    'RULE_BEGIN',
+                    'VARIABLE_IDENTIFIER'
                 ]
             )
         )
