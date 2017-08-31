@@ -86,6 +86,8 @@ class AbstractParser(object):
             self.q_t.append(token_end) # debug
             self.__throw_syntax_error()
 
+        return True
+
     def __parse_tokens(self, tokens=[]):
         ''' prototype to parse tokens and add to code instruction.
         + tokens {list} -- list of tokens from lexer.
