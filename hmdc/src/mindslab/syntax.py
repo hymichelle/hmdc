@@ -3,7 +3,7 @@
 HMDSyntaxDefault = {
 
     # primitive
-    'STRING': r'[A-Za-z]+',
+    'STRING': r'[A-Za-z?\']+',
     'NUMBER': r'[\d]+',
     'SPACE': r'[ ]+',
 
