@@ -71,7 +71,8 @@ class HMDGrammar(object):
                     'MATCH_ALWAYS',
                     'MATCH_NOT',
                     'GRAMMAR_HAT',
-                    'GRAMMAR_WILD'
+                    'GRAMMAR_WILD',
+                    'VARIABLE_IDENTIFIER'
                 ]
             )
         )

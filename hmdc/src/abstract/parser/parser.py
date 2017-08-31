@@ -33,7 +33,15 @@ class AbstractParser(object):
         ''' prototype to parse single or multiple tokens.
         + tokens {list|list[list]} -- list or nested lists of tokens.
         '''
-        return self.__parse_definition(tokens)
+        if not tokens: return
+
+        # not nested tokens
+        if not any(isinstance(l, list) for l in tokens): self.__parse_definition(tokens)
+
+        # nested tokens
+        else: [ self.__parse_definition(token_block) for token_block in tokens ]
+
+        return self.code
 
     #
     # private
@@ -50,12 +58,8 @@ class AbstractParser(object):
         var = "".join([ token.value for token in tokens ])
         token_peek, token_end = [tokens[0], tokens[-1]]
 
-        # definition construction
-        if token_peek.type == 'RULE_BEGIN' and token_end.type == 'RULE_END':
-            self.__parse_tokens(tokens)
-
         # variable
-        elif '$' in var:
+        if '$' in var:
 
             # variable identifier
             try: v_i = re.findall("\$[A-Za-z]{1}\w*", var)[0].strip()
@@ -65,11 +69,9 @@ class AbstractParser(object):
 
             # retrieval?
             if not '=' in var:
-
                 if v_i in self.variables.keys():
                     tokens = tokens[:var.index(v_i)] + self.variables[v_i] + tokens[var.index(v_i)+len(v_i):]
                     self.__parse_tokens(tokens)
-
                 else:
                     debug('w', "variable '%s' is not defined.\n" % v_i)
                     sys.exit(1)
@@ -78,15 +80,17 @@ class AbstractParser(object):
             else:
                 try: v_d = tokens[var.index('=')+1:var.index('#')] # comment
                 except ValueError: v_d = tokens[var.index('=')+1:]
-                self.variables[v_i] = v_d.strip()
+                self.variables[v_i] = v_d
+
+        # definition construction
+        elif token_peek.type == 'RULE_BEGIN' and token_end.type == 'RULE_END':
+            self.__parse_tokens(tokens)
 
         # error
         else:
             self.q_t.append(token_peek) # debug
             self.q_t.append(token_end) # debug
             self.__throw_syntax_error()
-
-        return True
 
     def __parse_tokens(self, tokens=[]):
         ''' prototype to parse tokens and add to code instruction.
@@ -97,6 +101,8 @@ class AbstractParser(object):
             sys.exit(1)
 
         self.q_t.append(tokens[0])
+        self.__consolidate_tokens(tokens[0])
+
         for token in tokens[1::]:
             self.q_t.append(token)
 
@@ -125,8 +131,7 @@ class AbstractParser(object):
     def __consolidate_tokens(self, token):
         ''' prototype to build instruction blocks.
         '''
-        if not token or token.type in ['RULE_BEGIN', 'RULE_END']: return
-        else: self.q_b.append(token.value)
+        self.q_b.append(token.value)
 
     #
     # error
