@@ -67,7 +67,7 @@ class AbstractParser(object):
             if not '=' in var:
 
                 if v_i in self.variables.keys():
-                    tokens = var[:var.index(v_i)] + self.variables[v_i] + var[var.index(v_i)+len(v_i):]
+                    tokens = tokens[:var.index(v_i)] + self.variables[v_i] + tokens[var.index(v_i)+len(v_i):]
                     self.__parse_tokens(tokens)
 
                 else:
@@ -76,8 +76,8 @@ class AbstractParser(object):
 
             # definition?
             else:
-                try: v_d = var[var.index('=')+1:var.index('#')] # comment
-                except ValueError: v_d = var[var.index('=')+1:]
+                try: v_d = tokens[var.index('=')+1:var.index('#')] # comment
+                except ValueError: v_d = tokens[var.index('=')+1:]
                 self.variables[v_i] = v_d.strip()
 
         # error
