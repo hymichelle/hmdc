@@ -1,0 +1,9 @@
+
+language: python
+
+install: true
+
+script:
+- make clean
+- make
+- ./hmdc -t
