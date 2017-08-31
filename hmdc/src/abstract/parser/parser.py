@@ -55,47 +55,44 @@ class AbstractParser(object):
             debug('w', "PARSER ERROR: there must be 2+ tokens to parse into matrix.\n")
             sys.exit(1)
 
-        var = "".join([ token.value for token in tokens ])
         token_peek, token_end = [tokens[0], tokens[-1]]
 
-        # variable
+        var = "".join([ token.value for token in tokens ])
+
+        # parse variable
         if '$' in var:
 
-            # variable identifier
             try:
-                variables = set(map(lambda x:x.strip(), re.findall("\$[A-Za-z]{1}\w*", var)))
+                # find all unique identifiers
+                identifiers = set(map(lambda x:x.strip(), re.findall("\$[A-Za-z]{1}\w*", var)))
             except IndexError:
                 debug('w', "SYNTAX ERROR: variable must be alphanumeric + '_' only.\n")
                 sys.exit(1)
 
-            for v_i in variables:
+            for v_i in identifiers:
 
-                # retrieval?
+                # are we interpolating variables?
                 if not '=' in var:
+
+                    # substitute multiple occurances
                     if v_i in self.variables.keys():
-
-                        # substitute multiple occurances
                         index = [ x.start() for x in re.finditer('\%s' % v_i, var) ] # escape '\$'
-                        for i in index:
-                            tokens = tokens[:i] + self.variables[v_i] + tokens[i+len(v_i):]
-
-                        # inject only once
+                        for i in index: tokens = tokens[:i] + self.variables[v_i] + tokens[i+len(v_i):]
                         self.__parse_tokens(tokens)
                     else:
                         debug('w', "variable '%s' is not defined.\n" % v_i)
                         sys.exit(1)
 
-                # definition?
+                # are we defining new variable?
                 else:
-                    try: v_d = tokens[var.index('=')+1:var.index('#')] # comment
-                    except ValueError: v_d = tokens[var.index('=')+1:]
+                    try: v_d = tokens[var.index('=')+1:var.index('#')] # upto comment
+                    except ValueError: v_d = tokens[var.index('=')+1:] # upto EOL
                     self.variables[v_i] = v_d
 
-        # definition construction
+        # parse definition
         elif token_peek.type == 'RULE_BEGIN' and token_end.type == 'RULE_END':
             self.__parse_tokens(tokens)
 
-        # error
         else:
             self.q_t.append(token_peek) # debug
             self.q_t.append(token_end) # debug
