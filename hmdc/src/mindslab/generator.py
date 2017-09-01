@@ -12,6 +12,41 @@ from src.debug import *
 import sys
 import re
 
+class HMDSchema(object):
+    ''' an abstract schema for a valid hmd line.
+    '''
+
+    def __init__(self, category=[], definition=''):
+
+        # static
+        self.syntax = HMDSyntaxDefault
+
+        # state
+        self.category = category
+        self.definition = definition
+
+    def pack(self, line):
+        ''' extract a line into hmd schema.
+        '''
+        if not line:
+            self.category = []
+            self.definition = ''
+            return
+        identifier = self.syntax.get('VARIABLE_IDENTIFIER', '$') # default
+        if identifier not in line:
+            tokens = line.split('\t')
+            self.category = tokens[:-1]
+            self.definition = tokens[-1]
+        else:
+            self.category = ['']
+            self.definition = line
+        return
+
+    def unpack(self):
+        ''' unpack a line into category and definition.
+        '''
+        return (self.category,self.definition)
+
 class HMDGenerator(AbstractGenerator):
     ''' default hierarchial multiple dictionary generator.
     '''
@@ -51,11 +86,16 @@ class HMDGenerator(AbstractGenerator):
         # delete all comments
         self.__remove_comments()
 
-        # extract categories
-        categories, definitions = [], []
-        for data in self.__extract_data():
-            categories.append(data[0])
-            definitions.append(data[-1])
+        # extract lines
+        schemas = []
+        for line in lines:
+            schema = HMDSchema()
+            schema.pack(line)
+            schemas.append(schema)
+
+        # consolidate
+        categories = filter(len, map(lambda x:x.category, schemas))
+        definitions = map(lambda x:x.definition, schemas)
 
         # lex
         self.tokens = self.lexer.lex(definitions)
@@ -64,7 +104,7 @@ class HMDGenerator(AbstractGenerator):
         self.code = self.parser.parse(self.tokens)
 
         # build matrix
-        merged = self.__merge_data(filter(len, categories), self.code)
+        merged = self.__merge_data(categories, self.code)
         return self.__build_matrix(merged)
 
     #
@@ -86,26 +126,6 @@ class HMDGenerator(AbstractGenerator):
         if self.hmd:
             self.hmd = filter(lambda x:not re.findall(r'^%s.+$' % token, x), self.hmd)
 
-    def __extract_data(self):
-        ''' split definitions from categories in session hmd data.
-        '''
-        if not self.hmd: return ['','']
-        token = self.syntax.get('VARIABLE_IDENTIFIER') or '$' # default
-        table = []
-        for hmd in self.hmd:
-
-            # store non-variables
-            if hmd[0] not in token:
-                hmd = hmd.split('\t')
-                table.append([
-                    hmd[:-1], # categories
-                    hmd[-1] # definition
-                ])
-
-            # store variables
-            else: table.append(['',hmd])
-        return table
-
     def __merge_data(self, categories=[], definitions=[]):
         ''' merge categories and definitions to matrix.
         '''
@@ -123,6 +143,7 @@ class HMDGenerator(AbstractGenerator):
         categories_cnt = min(max(map(lambda x:len(x[0]), hmd)), self.max_categories) # find the smallest
         for i in range(len(hmd)):
 
+            # schema
             hmd_peek = list(hmd[i])
             category = hmd_peek[0]
             definition = hmd_peek[-1]
