@@ -25,13 +25,14 @@ class HMDSchema(object):
         self.category = category
         self.definition = definition
 
-    def pack(self, line):
+    def pack(self, line=''):
         ''' extract a line into hmd schema.
         '''
         if not line:
             self.category = []
             self.definition = ''
             return
+
         identifier = self.syntax.get('VARIABLE_IDENTIFIER', '$') # default
         if identifier not in line:
             tokens = line.split('\t')
@@ -40,12 +41,11 @@ class HMDSchema(object):
         else:
             self.category = ['']
             self.definition = line
-        return
 
     def unpack(self):
         ''' unpack a line into category and definition.
         '''
-        return (self.category,self.definition)
+        return (self.category, self.definition)
 
 class HMDGenerator(AbstractGenerator):
     ''' default hierarchial multiple dictionary generator.
@@ -122,7 +122,7 @@ class HMDGenerator(AbstractGenerator):
     def __remove_comments(self):
         ''' remove all commented lines.
         '''
-        token = self.syntax.get('TOKEN') or '#' # default
+        token = self.syntax.get('TOKEN', '#') # default
         if self.hmd:
             self.hmd = filter(lambda x:not re.findall(r'^%s.+$' % token, x), self.hmd)
 
@@ -131,7 +131,7 @@ class HMDGenerator(AbstractGenerator):
         '''
         if categories and len(categories) == len(definitions):
             return zip(categories, self.code)
-        return [None,None]
+        return [None, None]
 
     def __build_matrix(self, hmd=[[],'']):
         ''' build matrix from hmd data.
@@ -150,7 +150,12 @@ class HMDGenerator(AbstractGenerator):
 
             # normalize category count
             deviation = int(len(category) - categories_cnt)
-            category.extend([''] * (0 - deviation)) # distance from origin
+            distance = 0 - deviation # distance from origin
+            if deviation >= 0:
+                category.extend([''] * distance)
+            else:
+                partition = abs(distance - 1)
+                category = category[partition:].append("_".join(category[:partition]))
 
             # compile matrix
             category = '\t'.join(category)
