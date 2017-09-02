@@ -38,12 +38,9 @@ debug 'd' "PATH_OUTPUT => '${PATH_OUTPUT}'"
   }
   debug 'i' 'cleaning up.. OK'
 
+  # prepare build
   mkdir -p "${PATH_BUILD}"
   debug 'i' "initializing new build path.. OK"
-
-  zip --quiet -j "${PATH_OUTPUT}" "${PATH_SOURCE}/__init__.py"
-  zip --quiet -j "${PATH_OUTPUT}" "${PATH_SOURCE}/__main__.py"
-  debug 'i' 'creating new zipped stub.. OK'
 
   # pack directories
   (
@@ -61,7 +58,7 @@ debug 'd' "PATH_OUTPUT => '${PATH_OUTPUT}'"
   debug 'i' 'copying stub to executable binary.. OK'
 
   # permission
-  chmod a+x "${PATH_OUTPUT}"
+  chmod u+x "${PATH_OUTPUT}"
   debug 'i' 'setting permission.. OK'
 
   # clean up
