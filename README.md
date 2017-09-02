@@ -25,12 +25,14 @@
 ## Test
 
 ```bash
+~$ # cd ./build
 ~$ python ./hmdc -t
 ```
 
 ## Usage
 
 ```bash
+~$ # cd ./build
 ~$ python ./hmdc -h
 ```
 

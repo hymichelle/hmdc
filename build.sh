@@ -33,13 +33,13 @@ debug 'd' "PATH_OUTPUT => '${PATH_OUTPUT}'"
   # clean up
   find "${PATH_SOURCE}" -type f -iname "*.py[co]" -delete
   [ -d "${PATH_BUILD}" ] && {
-    rm -rf "${PATH_BUILD}"
+    rm -rfv "${PATH_BUILD}"
     debug 'w' 'previous build already exists => deleting.. OK'
   }
   debug 'i' 'cleaning up.. OK'
 
   # prepare build
-  mkdir -p "${PATH_BUILD}"
+  mkdir -pv "${PATH_BUILD}"
   debug 'i' "initializing new build path.. OK"
 
   # pack directories
@@ -58,11 +58,11 @@ debug 'd' "PATH_OUTPUT => '${PATH_OUTPUT}'"
   debug 'i' 'copying stub to executable binary.. OK'
 
   # permission
-  chmod u+x "${PATH_OUTPUT}"
+  chmod u+x -v "${PATH_OUTPUT}"
   debug 'i' 'setting permission.. OK'
 
   # clean up
-  rm -f "${PATH_OUTPUT}.zip"
+  rm -fv "${PATH_OUTPUT}.zip"
   debug 'i' 'cleaning up.. OK'
 }
 
