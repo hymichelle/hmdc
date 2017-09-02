@@ -27,7 +27,6 @@ __program__ = 'hmdc'
 __version__ = '1.0.0-alpha'
 __license__ = 'MIT'
 
-
 if __name__ == '__main__':
 
     # adjust path if `this` is packed executable.
@@ -47,19 +46,12 @@ if __name__ == '__main__':
                          action='version',
                          version=__version__)
 
-    #
-    # test
-    #
-
-    # -t: run test suite and exit.
-    n_test.add_argument('-t', '--test',
-                        action='store_true',
-                        default=False,
-                        help="run tests (default: off)")
-
-    #
-    # data
-    #
+    # -c <str>: compile single inline (hmd) definition.
+    n_data.add_argument('-c',
+                        type=str,
+                        nargs='?',
+                        metavar='str',
+                        help='compile string (default: output to STDOUT)')
 
     # -f <file>: compile file hmd definition.
     n_data.add_argument('-f',
@@ -68,94 +60,85 @@ if __name__ == '__main__':
                         metavar='file',
                         help='compile file (default: output to STDOUT)')
 
-    # -c <str>: compile single inline (hmd) definition.
-    n_data.add_argument('-c',
-                        type=str,
-                        nargs='?',
-                        metavar='str',
-                        help='compile string (default: output to STDOUT)')
-
     # -o <file>: output matrix into file.
     n_data.add_argument('-o',
                         type=str,
                         nargs='?',
-                        default='output.matrix',
                         metavar='file',
                         help="save output to file (default: 'result.matrix')")
 
-    #
-    # build
-    #
-
     # -l <int>: limit total categories count. Any defincies or extraneous
     #           categories will automatically repair itself.
-    #
-    # [example]
-    # - case #1: limit = 3
-    #   A  B  C  {definition} => A  B  C  {definition}
-    #   D  E  F  {definition} => D  E  F  {definition}
-    # - case #2: limit = 2
-    #   A  B  C     {definition} => A  B  C    {definition}
-    #   D  E  F  G  {definition} => D  E  F_G  {definition}
-    # - case #3: limit = 4
-    #   A  B  C  D  {definition} => A  B  C  D   {definition}
-    #   E  F  G     {definition} => E  F  G  \t  {definition}
     n_build.add_argument('-l',
                          type=int,
                          nargs='?',
-                         default=10,
                          metavar='int',
+                         default=10,
                          help='set limit to category count (default: 10)')
 
-    # -Og: optimize ouptut matrix definitions by sorting the groupings.
-    #
-    # [example]
-    # - case #1: (c|b|a)(a|b)(d|c|x) => (a|b|c)(a|b)(c|d|x)
-    # - case #2: (c|b|a)(@b|@a)(d|c|x) => (a|b|c)(@b|@a)(c|d|x)
-    # - case #3: (c|b|a)(+1b|+2a)(d|c|x) => (a|b|c)(+1b|+2a)(c|d|x)
-    # - case #4: (c|b|a)(+1b|a)(d|c|x) => (a|b|c)(a|+1b)(c|d|x)
-    n_optim.add_argument('-Og',
+    # -s: optimize ouptut matrix definitions by sorting the groupings.
+    n_optim.add_argument('-s',
                          action='store_true',
                          default=False,
                          help='sort inline definition groups (default: off)')
 
-    # parse arguments
+    # -t: run test suite and exit.
+    n_test.add_argument('-t', '--test',
+                        action='store_true',
+                        default=False,
+                        help="run tests (default: off)")
+
     args = aparser.parse_args()
+    generator = HMDGenerator()
 
-    if args.test:
+    try:
 
-        # override non-test output to /dev/null
-        null = open(os.devnull, 'wb')
-        sys.stdout = sys.stderr = null
+        # test
+        if args.test:
 
-        test_suites, test_cases = [], (
-            # TestLexer,
-            # TestParserEnglish
-        )
+            # override non-test output to /dev/null
+            null = open(os.devnull, 'wb')
+            sys.stdout = sys.stderr = null
 
-        for test_case in test_cases:
-            test_suite = unittest.TestLoader().loadTestsFromTestCase(test_case)
-            test_suites.append(test_suite)
+            test_suites, test_cases = [], (
+                # TestLexer,
+                # TestParserEnglish
+            )
 
-        # run tests
-        result = unittest.TextTestRunner(verbosity=2).run(unittest.TestSuite(test_suites))
-        sys.exit(not result.wasSuccessful())
+            for test_case in test_cases:
+                test_suite = unittest.TestLoader().loadTestsFromTestCase(test_case)
+                test_suites.append(test_suite)
 
-    else:
-        generator = HMDGenerator()
+            # run tests
+            result = unittest.TextTestRunner(verbosity=2).run(unittest.TestSuite(test_suites))
+            sys.exit(not result.wasSuccessful())
 
-        # compile file
-        if args.f:
-            filename = args.f
-            if os.path.isfile(filename):
-                with open(filename, 'r') as f:
-                    c = f.read().split('\n')
-                    f.close()
-                sys.stdout.write(generator.generate(c))
-            else:
+        # compile
+        if args.c:
+            result = str(generator.generate(args.c))
+        elif args.f:
+            filename = str(args.f)
+            if not os.path.isfile(filename):
                 debug('w', "file '%s' does not exist.\n" % filename)
                 sys.exit(1)
+            with open(filename, 'r') as f:
+                c = f.read().split('\n')
+                f.close()
+            result = str(generator.generate(c))
+        else:
+            result = ''
 
-        # compile string
-        if args.c:
-            sys.stdout.write(generator.generate(args.c))
+        # output
+        if args.o:
+            filename = str(args.o)
+            with open(filename, 'w') as f:
+                f.write(result)
+                f.flush()
+                f.close()
+        else:
+            sys.stdout.write(result)
+
+    except KeyboardInterrupt:
+        debug('i', 'Cleaning up..\n')
+        del generator
+        sys.exit(0)
