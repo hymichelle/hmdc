@@ -24,32 +24,14 @@
 
 ## Test
 
-If you've already [built](#build) into an executable, run following:
-
 ```bash
-~$ cd build/
-~$ ./hmdc -t
-```
-
-If you want to test directly from source code, run following:
-
-```bash
-~$ python ./hmdc/__main__.py -t
+~$ python ./hmdc -t
 ```
 
 ## Usage
 
-If you've already [built](#build) into an executable, run following:
-
 ```bash
-~$ cd build/
-~$ ./hmdc -h
-```
-
-If you want to test directly from source code, run following:
-
-```bash
-~$ python ./hmdc/__main__.py -h
+~$ python ./hmdc -h
 ```
 
 ## Syntax

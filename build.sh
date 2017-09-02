@@ -16,54 +16,56 @@ function debug() {
 #
 
 PYTHON="$(which python)"
-debug 'd' "\$PYTHON => '${PYTHON}'"
+debug 'd' "PYTHON => '${PYTHON}'"
 
-EXECUTABLE='hmdc'
-debug 'd' "\$EXECUTABLE => '${EXECUTABLE}'"
+export EXECUTABLE='hmdc'
+debug 'd' "EXECUTABLE => '${EXECUTABLE}'"
 
-PATH_SOURCE='hmdc'
-PATH_BUILD='build'
-PATH_EXEC="${PATH_BUILD}/${EXECUTABLE}"
-debug 'd' "\$PATH_SOURCE => '${PATH_SOURCE}'"
-debug 'd' "\$PATH_BUILD => '${PATH_BUILD}'"
-debug 'd' "\$PATH_EXEC => '${PATH_EXEC}'"
+export PATH_SOURCE="hmdc"
+export PATH_BUILD="build"
+export PATH_OUTPUT="$(pwd)/${PATH_BUILD}/${EXECUTABLE}"
+debug 'd' "PATH_SOURCE => '${PATH_SOURCE}'"
+debug 'd' "PATH_BUILD => '${PATH_BUILD}'"
+debug 'd' "PATH_OUTPUT => '${PATH_OUTPUT}'"
 
 [ -n "$(which zip)" ] && {
 
-  # create stub
+  # clean up
+  find "${PATH_SOURCE}" -type f -iname "*.py[co]" -delete
   [ -d "${PATH_BUILD}" ] && {
     rm -rf "${PATH_BUILD}"
     debug 'w' 'previous build already exists => deleting.. OK'
   }
+  debug 'i' 'cleaning up.. OK'
 
   mkdir -p "${PATH_BUILD}"
   debug 'i' "initializing new build path.. OK"
 
-  zip --quiet -j "${PATH_EXEC}" "${PATH_SOURCE}/__main__.py"
+  zip --quiet -j "${PATH_OUTPUT}" "${PATH_SOURCE}/__init__.py"
+  zip --quiet -j "${PATH_OUTPUT}" "${PATH_SOURCE}/__main__.py"
   debug 'i' 'creating new zipped stub.. OK'
 
   # pack directories
-  find "${PATH_SOURCE}" \
-       -mindepth 1 \
-       -maxdepth 1 \
-       -type d \
-       -exec zip --quiet -r "${PATH_EXEC}" "{}" \;
+  (
+    cd "${PATH_SOURCE}"
+    zip -r "${PATH_OUTPUT}.zip" *
+  )
   debug 'i' 'adding source code to stub.. OK'
 
   # write header
-  echo "#!${PYTHON}" > "${PATH_EXEC}"
+  echo "#!${PYTHON}" > "${PATH_OUTPUT}"
   debug 'i' 'writing header to stub.. OK'
 
   # write body
-  cat "${PATH_EXEC}.zip" >> "${PATH_EXEC}"
+  cat "${PATH_OUTPUT}.zip" >> "${PATH_OUTPUT}"
   debug 'i' 'copying stub to executable binary.. OK'
 
   # permission
-  chmod a+x "${PATH_EXEC}"
+  chmod a+x "${PATH_OUTPUT}"
   debug 'i' 'setting permission.. OK'
 
   # clean up
-  rm -f "${PATH_EXEC}.zip"
+  rm -f "${PATH_OUTPUT}.zip"
   debug 'i' 'cleaning up.. OK'
 }
 
