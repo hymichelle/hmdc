@@ -27,6 +27,21 @@ __program__ = 'hmdc'
 __version__ = '1.0.0-alpha'
 __license__ = 'MIT'
 
+def run_all_tests():
+    ''' run test suite.
+    '''
+    test_suites, test_cases = [], (
+        # TestLexer,
+        # TestParserEnglish
+    )
+
+    for test_case in test_cases:
+        test_suite = unittest.TestLoader().loadTestsFromTestCase(test_case)
+        test_suites.append(test_suite)
+
+    result = unittest.TextTestRunner(verbosity=2).run(unittest.TestSuite(test_suites))
+    sys.exit(not result.wasSuccessful())
+
 if __name__ == '__main__':
 
     # adjust path if `this` is packed executable.
@@ -90,51 +105,33 @@ if __name__ == '__main__':
 
     args = aparser.parse_args()
     generator = HMDGenerator()
-
     try:
 
         # test
         if args.test:
-
-            # override non-test output to /dev/null
             null = open(os.devnull, 'wb')
-            sys.stdout = sys.stderr = null
+            sys.stdout = sys.stderr = null # override output to /dev/null
+            run_all_tests()
 
-            test_suites, test_cases = [], (
-                # TestLexer,
-                # TestParserEnglish
-            )
+        # compile string
+        if args.c: result = generator.generate(args.c)
 
-            for test_case in test_cases:
-                test_suite = unittest.TestLoader().loadTestsFromTestCase(test_case)
-                test_suites.append(test_suite)
-
-            # run tests
-            result = unittest.TextTestRunner(verbosity=2).run(unittest.TestSuite(test_suites))
-            sys.exit(not result.wasSuccessful())
-
-        # compile
-        if args.c:
-            result = str(generator.generate(args.c))
+        # compile file
         elif args.f:
-            filename = str(args.f)
-            if not os.path.isfile(filename):
-                debug('w', "file '%s' does not exist.\n" % filename)
+            if not os.path.isfile(args.f):
+                debug('w', "file '%s' does not exist.\n" % args.f)
                 sys.exit(1)
-            with open(filename, 'r') as f:
-                c = f.read().split('\n')
-                f.close()
-            result = str(generator.generate(c))
-        else:
-            result = ''
+            with open(args.f, 'r') as f:
+                c = filter(len, f.read().split('\n'))
+            result = generator.generate(c)
 
-        # output
+        # output to file
         if args.o:
-            filename = str(args.o)
-            with open(filename, 'w') as f:
+            with open(args.o, 'w') as f:
                 f.write(result)
                 f.flush()
-                f.close()
+
+        # output to STDOUT
         else:
             sys.stdout.write(result)
 
