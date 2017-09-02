@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import absolute_import
+from __init__ import *
 
 import errno
 import time
@@ -22,25 +23,6 @@ try:
     import pickle
 except ImportError as message:
     raise ImportError(message)
-
-__program__ = 'hmdc'
-__version__ = '1.0.0-alpha'
-__license__ = 'MIT'
-
-def run_all_tests():
-    ''' run test suite.
-    '''
-    test_suites, test_cases = [], (
-        # TestLexer,
-        # TestParserEnglish
-    )
-
-    for test_case in test_cases:
-        test_suite = unittest.TestLoader().loadTestsFromTestCase(test_case)
-        test_suites.append(test_suite)
-
-    result = unittest.TextTestRunner(verbosity=2).run(unittest.TestSuite(test_suites))
-    sys.exit(not result.wasSuccessful())
 
 if __name__ == '__main__':
 
