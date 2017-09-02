@@ -107,7 +107,7 @@ if __name__ == '__main__':
     generator = HMDGenerator()
     try:
 
-        # test
+        # run tests
         if args.test:
             null = open(os.devnull, 'wb')
             sys.stdout = sys.stderr = null # override output to /dev/null
@@ -133,7 +133,8 @@ if __name__ == '__main__':
 
         # output to STDOUT
         else:
-            sys.stdout.write(result)
+            try: sys.stdout.write(result)
+            except: pass
 
     except KeyboardInterrupt:
         debug('i', 'Cleaning up..\n')
