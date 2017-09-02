@@ -38,8 +38,7 @@
 
 ## Syntax
 
-```
-```
+See [syntax](./SYNTAX.md).
 
 ## Design
 
