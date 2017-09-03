@@ -81,32 +81,26 @@ class HMDGenerator(AbstractGenerator):
         if not lines: return
         self.__initialize_hmd(lines)
 
-        # delete all comments
+        # delete comments
         self.__remove_comments()
         if not self.hmd: return
 
-        # extract lines
+        # divide lines into hmd-schema
         schemas = []
-        for line in self.hmd:
+        for hmd in self.hmd:
             schema = HMDSchema()
-            schema.pack(line)
+            schema.pack(hmd)
             schemas.append(schema)
 
-        # consolidate
-        categories = filter(len, map(lambda x:x.category, schemas))
-        definitions = map(lambda x:x.definition, schemas)
+        # categories must be length-filtered due to variables
+        categories = filter(len, [ schema.category for schema in schemas ])
+        definitions = [ schema.definition for schema in schemas ]
 
-        # lex
+        # parse and generate matrix
         self.tokens = self.lexer.lex(definitions)
-
-        # parse
         self.code = self.parser.parse(self.tokens)
-
-        # permute
-        hmd = self.__permute_data(self.__merge_data(categories, self.code))
-
-        # build matrix
-        return self.__build_matrix(hmd)
+        self.hmd = self.__permute(self.__merge(categories, self.code))
+        return self.__build_matrix(self.hmd)
 
     #
     # private
@@ -124,34 +118,40 @@ class HMDGenerator(AbstractGenerator):
     def __remove_comments(self):
         ''' remove all commented lines.
         '''
-        token = self.syntax.get('COMMENT', '#') # default
-        if self.hmd:
-            self.hmd = filter(lambda x:not re.findall(r'^%s.+$' % token, x), self.hmd)
+        if not self.hmd: return
+        comments = r'^%s.+$' % self.syntax.get('COMMENT', '#')
+        self.hmd = filter(lambda x:not re.findall(comments, x), self.hmd)
 
-    def __merge_data(self, categories=[], definitions=[]):
+    def __merge(self, categories=[], definitions=[]):
         ''' merge categories and definitions to matrix.
+        + categories {list} -- hmd categories from schema.
+        + definitions {list} -- hmd definitions from schema.
         '''
         if categories and len(categories) == len(definitions):
-            return zip(categories, self.code)
-        return [None, None]
+            return zip(categories, self.code) # parsed definitions
+        else:
+            debug('w' '***bug***: incorrect merge: please check merging logic in generator.\n')
+            sys.exit(1)
 
-    def __permute_data(self, merged=[]):
+    def __permute(self, hmd_merged=[[],[]]):
         ''' permute two lists.
+        + hmd_merged {list[list,list]} -- merged categories and definitions.
         '''
-        return merged
+        return hmd_merged
 
-    def __build_matrix(self, hmd=[[],'']):
-        ''' build matrix from hmd data.
+    def __build_matrix(self, hmd_permuted=[[],'']):
+        ''' build matrix from hmd_permuted data.
+        + merged {list[list,list]} -- merged list categories and definitions.
         '''
-        if not hmd: return ''
+        if not hmd_permuted: return ''
         matrix = []
 
         # standardize category count
-        categories_cnt = min(max(map(lambda x:len(x[0]), hmd)), self.max_categories) # find the smallest
-        for i in range(len(hmd)):
+        categories_cnt = min(max(map(lambda x:len(x[0]), hmd_permuted)), self.max_categories) # find the smallest
+        for i in range(len(hmd_permuted)):
 
             # schema
-            hmd_peek = list(hmd[i])
+            hmd_peek = list(hmd_permuted[i])
             category = hmd_peek[0]
             definition = hmd_peek[-1]
 
