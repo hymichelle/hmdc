@@ -103,9 +103,11 @@ class HMDGenerator(AbstractGenerator):
         # parse
         self.code = self.parser.parse(self.tokens)
 
+        # permute
+        hmd = self.__permute_data(self.__merge_data(categories, self.code))
+
         # build matrix
-        merged = self.__merge_data(categories, self.code)
-        return self.__build_matrix(merged)
+        return self.__build_matrix(hmd)
 
     #
     # private
@@ -132,6 +134,11 @@ class HMDGenerator(AbstractGenerator):
         if categories and len(categories) == len(definitions):
             return zip(categories, self.code)
         return [None, None]
+
+    def __permute_data(self, merged=[]):
+        ''' permute two lists.
+        '''
+        return merged
 
     def __build_matrix(self, hmd=[[],'']):
         ''' build matrix from hmd data.

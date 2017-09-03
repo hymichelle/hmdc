@@ -58,16 +58,16 @@ class AbstractParser(object):
         var = "".join([ token.value for token in tokens ])
         token_peek, token_end = [tokens[0], tokens[-1]]
 
-        # parse variable
+        # variable
         if '$' in var:
 
-            try:
-                # find all unique identifiers
-                identifiers = set(map(lambda x:x.strip(), re.findall("\$[A-Za-z]{1}\w*", var)))
+            # find all unique identifiers
+            try: identifiers = set(map(lambda x:x.strip(), re.findall("\$[A-Za-z]{1}\w*", var)))
             except IndexError:
                 debug('w', "SYNTAX ERROR: variable must be alphanumeric + '_' only.\n")
                 sys.exit(1)
 
+            # iterate identifiers
             for v_i in identifiers:
 
                 # are we interpolating variables?
@@ -88,7 +88,7 @@ class AbstractParser(object):
                     except ValueError: v_d = tokens[var.index('=')+1:] # upto EOL
                     self.variables[v_i] = v_d
 
-        # parse definition
+        # definition
         elif token_peek.type == 'RULE_BEGIN' and token_end.type == 'RULE_END':
             self.__parse_tokens(tokens)
 
