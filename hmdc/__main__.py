@@ -79,6 +79,12 @@ if __name__ == '__main__':
                          default=False,
                          help='sort inline definition groups (default: off)')
 
+    # -u: remove repeated lines (unique matrix results only).
+    n_optim.add_argument('-u',
+                         action='store_true',
+                         default=False,
+                         help='remove repeated lines (default: off)')
+
     # -t: run test suite and exit.
     n_test.add_argument('-t', '--test',
                         action='store_true',
