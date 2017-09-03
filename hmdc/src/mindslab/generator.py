@@ -9,6 +9,7 @@ from src.mindslab.grammar import *
 from src.mindslab.syntax import *
 from src.debug import *
 
+import itertools
 import sys
 import re
 
@@ -68,7 +69,6 @@ class HMDGenerator(AbstractGenerator):
         # temporary states
         self.tokens = None
         self.hmd = None
-        self.code = None
         self.matrix = None
 
     #
@@ -98,9 +98,8 @@ class HMDGenerator(AbstractGenerator):
 
         # parse and generate matrix
         self.tokens = self.lexer.lex(definitions)
-        self.code = self.parser.parse(self.tokens)
-        self.hmd = self.__permute(self.__merge(categories, self.code))
-        return self.__build_matrix(self.hmd)
+        definitions = self.parser.parse(self.tokens)
+        return self.__build_matrix(categories, definitions)
 
     #
     # private
@@ -122,51 +121,41 @@ class HMDGenerator(AbstractGenerator):
         comments = r'^%s.+$' % self.syntax.get('COMMENT', '#')
         self.hmd = filter(lambda x:not re.findall(comments, x), self.hmd)
 
-    def __merge(self, categories=[], definitions=[]):
-        ''' merge categories and definitions to matrix.
-        + categories {list} -- hmd categories from schema.
-        + definitions {list} -- hmd definitions from schema.
+    def __permute(self, category=[], definition=''):
+        ''' get cartesian product of definitions and pair with category.
+        + category {list} -- a list of category.
+        + definition {list} -- definition.
         '''
-        if categories and len(categories) == len(definitions):
-            return zip(categories, self.code) # parsed definitions
-        else:
-            debug('w' '***bug***: incorrect merge: please check merging logic in generator.\n')
-            sys.exit(1)
+        return [category, definition]
 
-    def __permute(self, hmd_merged=[[],[]]):
-        ''' permute two lists.
-        + hmd_merged {list[list,list]} -- merged categories and definitions.
+    def __build_matrix(self, categories=[], definitions=[]):
+        ''' build matrix from hmd data.
+        + categories {list} -- a list of categories.
+        + definitions {list} -- a list of definitions.
         '''
-        return hmd_merged
-
-    def __build_matrix(self, hmd_permuted=[[],'']):
-        ''' build matrix from hmd_permuted data.
-        + merged {list[list,list]} -- merged list categories and definitions.
-        '''
-        if not hmd_permuted: return ''
+        try: assert bool(categories) and len(categories) == len(definitions)
+        except AssertionError: return
         matrix = []
 
         # standardize category count
-        categories_cnt = min(max(map(lambda x:len(x[0]), hmd_permuted)), self.max_categories) # find the smallest
-        for i in range(len(hmd_permuted)):
+        categories_cnt = min(max(map(len, categories)), self.max_categories) # find the smallest
+        for i in range(len(categories)):
 
-            # schema
-            hmd_peek = list(hmd_permuted[i])
-            category = hmd_peek[0]
-            definition = hmd_peek[-1]
+            category, definition = categories[i], definitions[i]
 
             # normalize category count
             deviation = int(len(category) - categories_cnt)
             distance = 0 - deviation # distance from origin
-            if deviation >= 0:
-                category.extend([''] * distance)
+            if deviation >= 0: category.extend([''] * distance)
             else:
                 partition = abs(distance - 1)
                 category = category[partition:].append("_".join(category[:partition]))
 
             # compile matrix
-            category = '\t'.join(category)
-            definition = '$'.join(definition[1:-1].split(')('))
-            matrix.append('\t'.join([category, definition]))
+            category, definition = self.__permute(category, definition)
+            matrix.append('\t'.join([
+                '\t'.join(category), # category
+                '$'.join(definition[1:-1].split(')(')) # definition
+            ]))
 
         return '\n'.join(matrix)
