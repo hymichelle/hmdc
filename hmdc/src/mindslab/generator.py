@@ -57,15 +57,13 @@ class HMDGenerator(AbstractGenerator):
         self.syntax = HMDSyntaxDefault
         self.grammar = HMDGrammar()
 
-        # initialized classes
+        # initialization
         self.lexer = AbstractLexer(self.syntax)
         self.parser = AbstractParser(self.grammar)
 
-        # flags
-        self.optimization = optimization or False
-
         # build options
         self.max_categories = max_categories
+        self.optimization = optimization
 
         # temporary states
         self.tokens = None
@@ -80,11 +78,12 @@ class HMDGenerator(AbstractGenerator):
     def generate(self, lines=[]):
         ''' compile hmd dictionary to matrix form.
         '''
-        if not lines: return []
+        if not lines: return
         self.__initialize_hmd(lines)
 
         # delete all comments
         self.__remove_comments()
+        if not self.hmd: return
 
         # extract lines
         schemas = []
@@ -114,9 +113,10 @@ class HMDGenerator(AbstractGenerator):
     #
 
     def __initialize_hmd(self, lines=[]):
-        ''' initialize input lines to workable format.
+        ''' initialize self.hmd with raw lines.
+        + lines {list} -- lines to convert from hmd to matrix.
         '''
-        try: self.hmd = sorted([ line.strip() for line in lines ]) # clean up
+        try: self.hmd = [ line.strip() for line in lines ]
         except:
             debug('w', "unable to sanitize input => check input for string type.\n")
             sys.exit(1)

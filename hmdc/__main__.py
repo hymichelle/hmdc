@@ -97,12 +97,12 @@ if __name__ == '__main__':
 
         # run tests
         if args.test:
-            null = open(os.devnull, 'wb')
-            sys.stdout = sys.stderr = null # override output to /dev/null
+            null = open(os.devnull, 'wb') # /dev/null
+            sys.stdout = sys.stderr = null
             run_all_tests()
 
         # compile string
-        if args.c: result = generator.generate(args.c)
+        if args.c: result = generator.generate([args.c])
 
         # compile file
         elif args.f:
