@@ -88,7 +88,7 @@ class HMDGenerator(AbstractGenerator):
 
         # extract lines
         schemas = []
-        for line in lines:
+        for line in self.hmd:
             schema = HMDSchema()
             schema.pack(line)
             schemas.append(schema)
@@ -122,7 +122,7 @@ class HMDGenerator(AbstractGenerator):
     def __remove_comments(self):
         ''' remove all commented lines.
         '''
-        token = self.syntax.get('TOKEN', '#') # default
+        token = self.syntax.get('COMMENT', '#') # default
         if self.hmd:
             self.hmd = filter(lambda x:not re.findall(r'^%s.+$' % token, x), self.hmd)
 

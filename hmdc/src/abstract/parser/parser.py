@@ -55,9 +55,8 @@ class AbstractParser(object):
             debug('w', "PARSER ERROR: there must be 2+ tokens to parse into matrix.\n")
             sys.exit(1)
 
-        token_peek, token_end = [tokens[0], tokens[-1]]
-
         var = "".join([ token.value for token in tokens ])
+        token_peek, token_end = [tokens[0], tokens[-1]]
 
         # parse variable
         if '$' in var:

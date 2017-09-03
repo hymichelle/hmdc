@@ -5,9 +5,7 @@ import sys
 
 def debug(category='', message=''):
     ''' custom debugging function.
-    + category {str} -- INFO
-                        DEBUG
-                        WARN
+    + category {str} -- INFO, DEBUG, WARN
     + message {str} -- message to print.
     '''
 

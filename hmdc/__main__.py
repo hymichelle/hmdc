@@ -62,7 +62,7 @@ if __name__ == '__main__':
                         type=str,
                         nargs='?',
                         metavar='file',
-                        help="save output to file (default: 'result.matrix')")
+                        help="save output to file")
 
     # -l <int>: limit total categories count. Any defincies or extraneous
     #           categories will automatically repair itself.
