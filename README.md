@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/initbar/hmdc.svg?branch=master)](https://travis-ci.org/initbar/hmdc)
+[![](https://img.shields.io/badge/python-2.7-blue.svg)](https://www.python.org/download/releases/2.7/)
 
 # hmdc
 
