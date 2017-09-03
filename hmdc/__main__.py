@@ -122,7 +122,7 @@ if __name__ == '__main__':
         # output to STDOUT
         else:
             try: sys.stdout.write(result)
-            except: pass
+            except: sys.stdout.write(__logo__)
 
     except KeyboardInterrupt:
         debug('i', 'Cleaning up..\n')
