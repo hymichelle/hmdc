@@ -67,7 +67,6 @@ class HMDGenerator(AbstractGenerator):
         self.optimization = optimization
 
         # temporary states
-        self.tokens = None
         self.hmd = None
         self.matrix = None
 
@@ -97,8 +96,8 @@ class HMDGenerator(AbstractGenerator):
         definitions = [ schema.definition for schema in schemas ]
 
         # parse and generate matrix
-        self.tokens = self.lexer.lex(definitions)
-        definitions = self.parser.parse(self.tokens)
+        tokens = self.lexer.lex(definitions)
+        definitions = self.parser.parse(tokens)
         return self.__build_matrix(categories, definitions)
 
     #
