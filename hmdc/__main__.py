@@ -26,6 +26,11 @@ except ImportError as message:
 
 if __name__ == '__main__':
 
+    # print logo if no flag
+    if not len(sys.argv) - 1:
+        sys.stdout.write(__logo__)
+        sys.exit(0)
+
     # adjust path if `this` is packed executable.
     if __package__ is None and not hasattr(sys, 'frozen'):
         path = os.path.realpath(os.path.abspath(__file__))
@@ -122,7 +127,7 @@ if __name__ == '__main__':
         # output to STDOUT
         else:
             try: sys.stdout.write(result)
-            except: sys.stdout.write(__logo__)
+            except: pass
 
     except KeyboardInterrupt:
         debug('i', 'Cleaning up..\n')
