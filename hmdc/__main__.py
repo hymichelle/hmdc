@@ -19,11 +19,11 @@ try:
     from src.mindslab.grammar import HMDGrammar
     from src.mindslab.syntax import *
     from src.debug import *
+    import argparse
+    import unittest
 
     # tests
     from tests.test_lexer import TestLexer
-    import argparse
-    import unittest
     import pickle
 except ImportError as message:
     raise ImportError(message)

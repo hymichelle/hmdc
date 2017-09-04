@@ -23,42 +23,46 @@ class TestLexer(unittest.TestCase):
 
     def test_lexer_string_short_A(self):
         attempt = str(self.lexer.lex('A'))
-        answer = "[{'y': 0, 'x': 0, 'type': 'STRING', 'value': 'A'}]"
+        answer = str([{'y': 0, 'x': 0, 'type': 'STRING', 'value': 'A'}])
         self.assertEqual(attempt, answer)
 
     def test_lexer_string_short_a(self):
         attempt = str(self.lexer.lex('a'))
-        answer = "[{'y': 0, 'x': 0, 'type': 'STRING', 'value': 'a'}]"
+        answer = str([{'y': 0, 'x': 0, 'type': 'STRING', 'value': 'a'}])
         self.assertEqual(attempt, answer)
 
     def test_lexer_string_short_Z(self):
         attempt = str(self.lexer.lex('Z'))
-        answer = "[{'y': 0, 'x': 0, 'type': 'STRING', 'value': 'Z'}]"
+        answer = str([{'y': 0, 'x': 0, 'type': 'STRING', 'value': 'Z'}])
         self.assertEqual(attempt, answer)
 
     def test_lexer_string_short_z(self):
         attempt = str(self.lexer.lex('z'))
-        answer = "[{'y': 0, 'x': 0, 'type': 'STRING', 'value': 'z'}]"
+        answer = str([{'y': 0, 'x': 0, 'type': 'STRING', 'value': 'z'}])
         self.assertEqual(attempt, answer)
 
     def test_lexer_string_long_A(self):
         attempt = str(self.lexer.lex('AA'))
-        answer = "[{'y': 0, 'x': 0, 'type': 'STRING', 'value': 'A'}, {'y': 0, 'x': 1, 'type': 'STRING', 'value': 'A'}]"
+        answer = str([{'y': 0, 'x': 0, 'type': 'STRING', 'value': 'A'},
+        	      {'y': 0, 'x': 1, 'type': 'STRING', 'value': 'A'}])
         self.assertEqual(attempt, answer)
 
     def test_lexer_string_long_a(self):
         attempt = str(self.lexer.lex('aa'))
-        answer = "[{'y': 0, 'x': 0, 'type': 'STRING', 'value': 'a'}, {'y': 0, 'x': 1, 'type': 'STRING', 'value': 'a'}]"
+        answer = str([{'y': 0, 'x': 0, 'type': 'STRING', 'value': 'a'},
+        	      {'y': 0, 'x': 1, 'type': 'STRING', 'value': 'a'}])
         self.assertEqual(attempt, answer)
 
     def test_lexer_string_long_Z(self):
         attempt = str(self.lexer.lex('ZZ'))
-        answer = "[{'y': 0, 'x': 0, 'type': 'STRING', 'value': 'Z'}, {'y': 0, 'x': 1, 'type': 'STRING', 'value': 'Z'}]"
+        answer = str([{'y': 0, 'x': 0, 'type': 'STRING', 'value': 'Z'},
+                      {'y': 0, 'x': 1, 'type': 'STRING', 'value': 'Z'}])
         self.assertEqual(attempt, answer)
 
     def test_lexer_string_long_z(self):
         attempt = str(self.lexer.lex('zz'))
-        answer = "[{'y': 0, 'x': 0, 'type': 'STRING', 'value': 'z'}, {'y': 0, 'x': 1, 'type': 'STRING', 'value': 'z'}]"
+        answer = str([{'y': 0, 'x': 0, 'type': 'STRING', 'value': 'z'},
+                      {'y': 0, 'x': 1, 'type': 'STRING', 'value': 'z'}])
         self.assertEqual(attempt, answer)
 
     #
@@ -67,88 +71,125 @@ class TestLexer(unittest.TestCase):
 
     def test_lexer_number_one(self):
         attempt = str(self.lexer.lex('1'))
-        answer = "[{'y': 0, 'x': 0, 'type': 'NUMBER', 'value': '1'}]"
+        answer = str([{'y': 0, 'x': 0, 'type': 'NUMBER', 'value': '1'}])
         self.assertEqual(attempt, answer)
 
     def test_lexer_number_two(self):
         attempt = str(self.lexer.lex('2'))
-        answer = "[{'y': 0, 'x': 0, 'type': 'NUMBER', 'value': '2'}]"
+        answer = str([{'y': 0, 'x': 0, 'type': 'NUMBER', 'value': '2'}])
         self.assertEqual(attempt, answer)
 
     def test_lexer_number_three(self):
         attempt = str(self.lexer.lex('3'))
-        answer = "[{'y': 0, 'x': 0, 'type': 'NUMBER', 'value': '3'}]"
+        answer = str([{'y': 0, 'x': 0, 'type': 'NUMBER', 'value': '3'}])
         self.assertEqual(attempt, answer)
 
     def test_lexer_number_four(self):
         attempt = str(self.lexer.lex('4'))
-        answer = "[{'y': 0, 'x': 0, 'type': 'NUMBER', 'value': '4'}]"
+        answer = str([{'y': 0, 'x': 0, 'type': 'NUMBER', 'value': '4'}])
         self.assertEqual(attempt, answer)
 
     def test_lexer_number_five(self):
         attempt = str(self.lexer.lex('5'))
-        answer = "[{'y': 0, 'x': 0, 'type': 'NUMBER', 'value': '5'}]"
+        answer = str([{'y': 0, 'x': 0, 'type': 'NUMBER', 'value': '5'}])
         self.assertEqual(attempt, answer)
 
     def test_lexer_number_six(self):
         attempt = str(self.lexer.lex('6'))
-        answer = "[{'y': 0, 'x': 0, 'type': 'NUMBER', 'value': '6'}]"
+        answer = str([{'y': 0, 'x': 0, 'type': 'NUMBER', 'value': '6'}])
         self.assertEqual(attempt, answer)
 
     def test_lexer_number_seven(self):
         attempt = str(self.lexer.lex('7'))
-        answer = "[{'y': 0, 'x': 0, 'type': 'NUMBER', 'value': '7'}]"
+        answer = str([{'y': 0, 'x': 0, 'type': 'NUMBER', 'value': '7'}])
         self.assertEqual(attempt, answer)
 
     def test_lexer_number_eight(self):
         attempt = str(self.lexer.lex('8'))
-        answer = "[{'y': 0, 'x': 0, 'type': 'NUMBER', 'value': '8'}]"
+        answer = str([{'y': 0, 'x': 0, 'type': 'NUMBER', 'value': '8'}])
         self.assertEqual(attempt, answer)
 
     def test_lexer_number_nine(self):
         attempt = str(self.lexer.lex('9'))
-        answer = "[{'y': 0, 'x': 0, 'type': 'NUMBER', 'value': '9'}]"
+        answer = str([{'y': 0, 'x': 0, 'type': 'NUMBER', 'value': '9'}])
         self.assertEqual(attempt, answer)
 
     def test_lexer_number_zero(self):
         attempt = str(self.lexer.lex('0'))
-        answer = "[{'y': 0, 'x': 0, 'type': 'NUMBER', 'value': '0'}]"
+        answer = str([{'y': 0, 'x': 0, 'type': 'NUMBER', 'value': '0'}])
         self.assertEqual(attempt, answer)
 
     #
     # symbols
     #
 
-    def test_lexer_symbol_random_1(self):
+    def test_lexer_symbol_random_01(self):
         attempt = str(self.lexer.lex('@'))
-        answer = "[{'y': 0, 'x': 0, 'type': 'SYMBOL', 'value': '@'}]"
+        answer = str([{'y': 0, 'x': 0, 'type': 'SYMBOL', 'value': '@'}])
         self.assertEqual(attempt, answer)
 
-    def test_lexer_symbol_random_2(self):
+    def test_lexer_symbol_random_02(self):
         attempt = str(self.lexer.lex('+'))
-        answer = "[{'y': 0, 'x': 0, 'type': 'SYMBOL', 'value': '+'}]"
+        answer = str([{'y': 0, 'x': 0, 'type': 'SYMBOL', 'value': '+'}])
         self.assertEqual(attempt, answer)
 
-    def test_lexer_symbol_random_3(self):
+    def test_lexer_symbol_random_03(self):
         attempt = str(self.lexer.lex('!'))
-        answer = "[{'y': 0, 'x': 0, 'type': 'SYMBOL', 'value': '!'}]"
+        answer = str([{'y': 0, 'x': 0, 'type': 'SYMBOL', 'value': '!'}])
         self.assertEqual(attempt, answer)
 
-    def test_lexer_symbol_random_4(self):
+    def test_lexer_symbol_random_04(self):
         attempt = str(self.lexer.lex('#'))
-        answer = "[{'y': 0, 'x': 0, 'type': 'SYMBOL', 'value': '#'}]"
+        answer = str([{'y': 0, 'x': 0, 'type': 'SYMBOL', 'value': '#'}])
         self.assertEqual(attempt, answer)
 
-    def test_lexer_symbol_random_5(self):
+    def test_lexer_symbol_random_05(self):
         attempt = str(self.lexer.lex('{'))
-        answer = "[{'y': 0, 'x': 0, 'type': 'SYMBOL', 'value': '{'}]"
+        answer = str([{'y': 0, 'x': 0, 'type': 'SYMBOL', 'value': '{'}])
+        self.assertEqual(attempt, answer)
+
+    def test_lexer_symbol_random_06(self):
+        attempt = str(self.lexer.lex('}'))
+        answer = str([{'y': 0, 'x': 0, 'type': 'SYMBOL', 'value': '}'}])
+        self.assertEqual(attempt, answer)
+
+    def test_lexer_symbol_random_07(self):
+        attempt = str(self.lexer.lex('-'))
+        answer = str([{'y': 0, 'x': 0, 'type': 'SYMBOL', 'value': '-'}])
+        self.assertEqual(attempt, answer)
+
+    def test_lexer_symbol_random_08(self):
+        attempt = str(self.lexer.lex('_'))
+        answer = str([{'y': 0, 'x': 0, 'type': 'SYMBOL', 'value': '_'}])
+        self.assertEqual(attempt, answer)
+
+    def test_lexer_symbol_random_09(self):
+        attempt = str(self.lexer.lex('^'))
+        answer = str([{'y': 0, 'x': 0, 'type': 'SYMBOL', 'value': '^'}])
+        self.assertEqual(attempt, answer)
+
+    def test_lexer_symbol_random_10(self):
+        attempt = str(self.lexer.lex('%'))
+        answer = str([{'y': 0, 'x': 0, 'type': 'SYMBOL', 'value': '%'}])
+        self.assertEqual(attempt, answer)
+
+    def test_lexer_symbol_random_11(self):
+        attempt = str(self.lexer.lex('.'))
+        answer = str([{'y': 0, 'x': 0, 'type': 'SYMBOL', 'value': '.'}])
         self.assertEqual(attempt, answer)
 
     #
     # space
     #
 
-    def test_lexer_space(self):
+    def test_lexer_space_single(self):
         attempt = str(self.lexer.lex(' '))
-        answer = "[{'y': 0, 'x': 0, 'type': 'SPACE', 'value': ' '}]"
+        answer = str([{'y': 0, 'x': 0, 'type': 'SPACE', 'value': ' '}])
+        self.assertEqual(attempt, answer)
+
+    def test_lexer_space_multiple(self):
+        attempt = str(self.lexer.lex('   '))
+        answer = str([{'y': 0, 'x': 0, 'type': 'SPACE', 'value': ' '},
+                      {'y': 0, 'x': 1, 'type': 'SPACE', 'value': ' '},
+                      {'y': 0, 'x': 2, 'type': 'SPACE', 'value': ' '}])
         self.assertEqual(attempt, answer)
