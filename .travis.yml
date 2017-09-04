@@ -1,9 +1,15 @@
 
 language: python
+python:
+  - '2.7'
+
+branches:
+  only:
+  - master
 
 install: true
-
 script:
-- make clean
-- make
+- python ./hmdc -t
+- bash build.sh
+- cd ./build
 - ./hmdc -t
