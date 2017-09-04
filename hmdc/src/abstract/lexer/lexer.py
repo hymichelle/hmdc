@@ -41,15 +41,15 @@ class AbstractLexer(object):
             return [ AbstractToken(value=tokenable[i],
                                    type=self.__tokenize(tokenable[i]),
                                    x=i, y=0)
-                     for i in range(len(tokenable)) ]
+                     for i in xrange(len(tokenable)) ]
 
         # tuple/list
         else:
             return [ [ AbstractToken(value=tokenable[i][j],
                                      type=self.__tokenize(tokenable[i][j]),
                                      x=j, y=i)
-                       for j in range(len(tokenable[i])) ]
-                     for i in range(len(tokenable)) ]
+                       for j in xrange(len(tokenable[i])) ]
+                     for i in xrange(len(tokenable)) ]
 
     #
     # private

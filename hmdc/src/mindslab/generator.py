@@ -138,7 +138,7 @@ class HMDGenerator(AbstractGenerator):
 
         # standardize category count
         categories_cnt = min(max(map(len, categories)), self.max_categories) # find the smallest
-        for i in range(len(categories)):
+        for i in xrange(len(categories)):
 
             # schema
             category, definition = categories[i], definitions[i]
