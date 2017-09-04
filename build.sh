@@ -21,8 +21,8 @@ debug 'd' "PYTHON => '${PYTHON}'"
 export EXECUTABLE='hmdc'
 debug 'd' "EXECUTABLE => '${EXECUTABLE}'"
 
-export PATH_SOURCE="hmdc"
-export PATH_BUILD="build"
+export PATH_SOURCE='hmdc'
+export PATH_BUILD='build'
 export PATH_OUTPUT="$(pwd)/${PATH_BUILD}/${EXECUTABLE}"
 debug 'd' "PATH_SOURCE => '${PATH_SOURCE}'"
 debug 'd' "PATH_BUILD => '${PATH_BUILD}'"
@@ -31,7 +31,7 @@ debug 'd' "PATH_OUTPUT => '${PATH_OUTPUT}'"
 [ -n "$(which zip)" ] && {
 
   # clean up
-  find "${PATH_SOURCE}" -type f -iname "*.py[co]" -delete
+  find "${PATH_SOURCE}" -type f -iname '*.py[co]' -delete
   [ -d "${PATH_BUILD}" ] && {
     rm -rfv "${PATH_BUILD}"
     debug 'w' 'previous build already exists => deleting.. OK'
@@ -40,7 +40,7 @@ debug 'd' "PATH_OUTPUT => '${PATH_OUTPUT}'"
 
   # prepare build
   mkdir -pv "${PATH_BUILD}"
-  debug 'i' "initializing new build path.. OK"
+  debug 'i' 'initializing new build path.. OK'
 
   # pack directories
   (
