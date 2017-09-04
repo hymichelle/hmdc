@@ -33,7 +33,7 @@ class AbstractParser(object):
         ''' prototype to parse single or multiple tokens.
         + tokens {list|list[list]} -- list or nested lists of tokens.
         '''
-        if not tokens: return
+        if not tokens: return []
 
         # not nested tokens
         if not any(isinstance(l, list) for l in tokens): self.__parse_definition(tokens)

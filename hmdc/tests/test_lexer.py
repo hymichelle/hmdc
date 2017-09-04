@@ -195,10 +195,10 @@ class TestLexer(unittest.TestCase):
         self.assertEqual(attempt, answer)
 
     #
-    # complex
+    # mixed
     #
 
-    def test_lexer_complex_index_type_same(self):
+    def test_lexer_mixed_index_type_same(self):
         attempt = str(self.lexer.lex(['0',1,23,456,7890]))
         answer = str([[{'y': 0, 'x': 0, 'type': 'NUMBER', 'value': '0'}],
                       [{'y': 1, 'x': 0, 'type': 'NUMBER', 'value': '1'}],
@@ -213,7 +213,7 @@ class TestLexer(unittest.TestCase):
                        {'y': 4, 'x': 3, 'type': 'NUMBER', 'value': '0'}]])
         self.assertEqual(attempt, answer)
 
-    def test_lexer_complex_index_type_different(self):
+    def test_lexer_mixed_index_type_different(self):
         attempt = str(self.lexer.lex(['0','A','bc','$%^',7890]))
         answer = str([[{'y': 0, 'x': 0, 'type': 'NUMBER', 'value': '0'}],
                       [{'y': 1, 'x': 0, 'type': 'STRING', 'value': 'A'}],
@@ -228,7 +228,7 @@ class TestLexer(unittest.TestCase):
                        {'y': 4, 'x': 3, 'type': 'NUMBER', 'value': '0'}]])
         self.assertEqual(attempt, answer)
 
-    def test_lexer_complex_index_type_blank(self):
+    def test_lexer_mixed_index_type_empty(self):
         attempt = str(self.lexer.lex(['0','A','bc','$%^','','']))
         answer = str([[{'y': 0, 'x': 0, 'type': 'NUMBER', 'value': '0'}],
                       [{'y': 1, 'x': 0, 'type': 'STRING', 'value': 'A'}],
