@@ -193,3 +193,50 @@ class TestLexer(unittest.TestCase):
                       {'y': 0, 'x': 1, 'type': 'SPACE', 'value': ' '},
                       {'y': 0, 'x': 2, 'type': 'SPACE', 'value': ' '}])
         self.assertEqual(attempt, answer)
+
+    #
+    # complex
+    #
+
+    def test_lexer_complex_index_type_same(self):
+        attempt = str(self.lexer.lex([0,1,23,456,7890]))
+        answer = str([[{'y': 0, 'x': 0, 'type': 'NUMBER', 'value': '0'}],
+                      [{'y': 1, 'x': 0, 'type': 'NUMBER', 'value': '1'}],
+                      [{'y': 2, 'x': 0, 'type': 'NUMBER', 'value': '2'},
+                       {'y': 2, 'x': 1, 'type': 'NUMBER', 'value': '3'}],
+                      [{'y': 3, 'x': 0, 'type': 'NUMBER', 'value': '4'},
+                       {'y': 3, 'x': 1, 'type': 'NUMBER', 'value': '5'},
+                       {'y': 3, 'x': 2, 'type': 'NUMBER', 'value': '6'}],
+                      [{'y': 4, 'x': 0, 'type': 'NUMBER', 'value': '7'},
+                       {'y': 4, 'x': 1, 'type': 'NUMBER', 'value': '8'},
+                       {'y': 4, 'x': 2, 'type': 'NUMBER', 'value': '9'},
+                       {'y': 4, 'x': 3, 'type': 'NUMBER', 'value': '0'}]])
+        self.assertEqual(attempt, answer)
+
+    def test_lexer_complex_index_type_different(self):
+        attempt = str(self.lexer.lex([0,'A','bc','$%^',7890]))
+        answer = str([[{'y': 0, 'x': 0, 'type': 'NUMBER', 'value': '0'}],
+                      [{'y': 1, 'x': 0, 'type': 'STRING', 'value': 'A'}],
+                      [{'y': 2, 'x': 0, 'type': 'STRING', 'value': 'b'},
+                       {'y': 2, 'x': 1, 'type': 'STRING', 'value': 'c'}],
+                      [{'y': 3, 'x': 0, 'type': 'SYMBOL', 'value': '$'},
+                       {'y': 3, 'x': 1, 'type': 'SYMBOL', 'value': '%'},
+                       {'y': 3, 'x': 2, 'type': 'SYMBOL', 'value': '^'}],
+                      [{'y': 4, 'x': 0, 'type': 'NUMBER', 'value': '7'},
+                       {'y': 4, 'x': 1, 'type': 'NUMBER', 'value': '8'},
+                       {'y': 4, 'x': 2, 'type': 'NUMBER', 'value': '9'},
+                       {'y': 4, 'x': 3, 'type': 'NUMBER', 'value': '0'}]])
+        self.assertEqual(attempt, answer)
+
+    def test_lexer_complex_index_type_blank(self):
+        attempt = str(self.lexer.lex([0,'A','bc','$%^','','']))
+        answer = str([[{'y': 0, 'x': 0, 'type': 'NUMBER', 'value': '0'}],
+                      [{'y': 1, 'x': 0, 'type': 'STRING', 'value': 'A'}],
+                      [{'y': 2, 'x': 0, 'type': 'STRING', 'value': 'b'},
+                       {'y': 2, 'x': 1, 'type': 'STRING', 'value': 'c'}],
+                      [{'y': 3, 'x': 0, 'type': 'SYMBOL', 'value': '$'},
+                       {'y': 3, 'x': 1, 'type': 'SYMBOL', 'value': '%'},
+                       {'y': 3, 'x': 2, 'type': 'SYMBOL', 'value': '^'}],
+                      [],
+                      []])
+        self.assertEqual(attempt, answer)

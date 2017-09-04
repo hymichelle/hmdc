@@ -45,6 +45,7 @@ class AbstractLexer(object):
 
         # tuple/list
         else:
+            tokenable = map(str, tokenable) # convert
             return [ [ AbstractToken(value=tokenable[i][j],
                                      type=self.__tokenize(tokenable[i][j]),
                                      x=j, y=i)
