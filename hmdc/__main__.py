@@ -9,15 +9,19 @@ import sys
 import os
 
 try:
-    from src.abstract.automata.automata import *
-    from src.abstract.generator.generator import *
-    from src.abstract.parser.parser import *
-    from src.abstract.lexer.token import *
-    from src.abstract.lexer.lexer import *
-    from src.mindslab.generator import *
-    from src.mindslab.grammar import *
+    # libraries
+    from src.abstract.automata.automata import AbstractAutomata, AbstractAutomataMachine
+    from src.abstract.generator.generator import AbstractGenerator
+    from src.abstract.parser.parser import AbstractParser
+    from src.abstract.lexer.token import AbstractToken
+    from src.abstract.lexer.lexer import AbstractLexer
+    from src.mindslab.generator import HMDSchema, HMDGenerator
+    from src.mindslab.grammar import HMDGrammar
     from src.mindslab.syntax import *
     from src.debug import *
+
+    # tests
+    from tests.test_lexer import TestLexer
     import argparse
     import unittest
     import pickle
@@ -102,9 +106,18 @@ if __name__ == '__main__':
 
         # run tests
         if args.test:
+
+            # load tests
+            test_suites, test_cases = [], [TestLexer]
+            for test_case in test_cases:
+                test_suite = unittest.TestLoader().loadTestsFromTestCase(test_case)
+                test_suites.append(test_suite)
+
+            # run quietly
             null = open(os.devnull, 'wb') # /dev/null
             sys.stdout = sys.stderr = null
-            run_all_tests()
+            result = unittest.TextTestRunner(verbosity=2).run(unittest.TestSuite(test_suites))
+            sys.exit(not result.wasSuccessful())
 
         # compile string
         if args.c: result = generator.generate([args.c])

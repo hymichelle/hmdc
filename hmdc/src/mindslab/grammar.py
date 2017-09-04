@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from src.abstract.automata.automata import *
+from src.abstract.automata.automata import AbstractAutomata, AbstractAutomataMachine
 
 class HMDGrammar(object):
     ''' default hierarchial multiple dictionary grammar.

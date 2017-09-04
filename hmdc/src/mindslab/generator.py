@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
+from src.abstract.automata.automata import AbstractAutomata, AbstractAutomataMachine
 from src.abstract.generator.generator import AbstractGenerator
-from src.abstract.automata.automata import *
-from src.abstract.parser.parser import *
-from src.abstract.lexer.token import *
-from src.abstract.lexer.lexer import *
-from src.mindslab.grammar import *
+from src.abstract.parser.parser import AbstractParser
+from src.abstract.lexer.token import AbstractToken
+from src.abstract.lexer.lexer import AbstractLexer
+from src.mindslab.grammar import HMDGrammar
 from src.mindslab.syntax import *
 from src.debug import *
 
