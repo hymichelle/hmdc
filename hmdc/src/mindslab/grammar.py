@@ -142,7 +142,9 @@ class HMDGrammar(object):
                     'NUMBER',
                     'SPACE',
                     'GRAMMAR_HAT',
-                    'GRAMMAR_WILD'
+                    'GRAMMAR_WILD',
+                    'MATCH_BEFORE',
+                    'MATCH_NEXT'
                 ]
             )
         )

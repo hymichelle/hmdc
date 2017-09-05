@@ -120,12 +120,39 @@ class HMDGenerator(AbstractGenerator):
         comments = r'^%s.+$' % self.syntax.get('COMMENT', '#')
         self.hmd = filter(lambda x:not re.findall(comments, x), self.hmd)
 
+    def __flatten(self, L=[]):
+        ''' recursively flatten nested lists/tuples.
+        + L {list|tuple} -- nested list/tuple.
+        '''
+        if not L: return L
+        if isinstance(L[0], tuple) or isinstance(L[0], list):
+            return self.__flatten(L[0]) + self.__flatten(L[1:])
+        return L[:1] + self.__flatten(L[1:])
+
     def __permute(self, category=[], definition=''):
         ''' get cartesian product of definitions and pair with category.
         + category {list} -- a list of category.
         + definition {list} -- definition.
         '''
-        return [category, definition]
+        try: blocks = definition[1:-1].split(')(')
+        except IndexError: blocks = []
+        if not blocks: return blocks
+
+        # tokenize into sets
+        s_p, s_q = [], []
+        for block in blocks:
+            if '|' in block: s_p.append(block.split('|'))
+            else: s_q.append(block)
+
+        # find cartesian product
+        if s_p:
+            nested =  [ product for product in reduce(lambda x,y:itertools.product(x,y), s_p) ]
+            product = map(list, [ self.__flatten(nest) for nest in nested ])
+
+        # pair with categories
+        try: permutation = [ [category, '(%s)' % ')('.join(pairable + s_q)] for pairable in product ]
+        except: permutation = [[]]
+        return permutation
 
     def __build_matrix(self, categories=[], definitions=[]):
         ''' build matrix from hmd data.
@@ -152,10 +179,11 @@ class HMDGenerator(AbstractGenerator):
                 category = category[partition:].append("_".join(category[:partition]))
 
             # compile matrix
-            category, definition = self.__permute(category, definition)
-            matrix.append('\t'.join([
-                '\t'.join(category), # category
-                '$'.join(definition[1:-1].split(')(')) # definition
-            ]))
+            for permutation in self.__permute(category, definition):
+                category, definition = permutation
+                matrix.append('\t'.join([
+                    '\t'.join(category), # category
+                    '$'.join(definition[1:-1].split(')(')) # definition
+                ]))
 
         return '\n'.join(matrix)
