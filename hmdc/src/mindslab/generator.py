@@ -151,7 +151,7 @@ class HMDGenerator(AbstractGenerator):
 
         # pair with categories
         try: permutation = [ [category, '(%s)' % ')('.join(pairable + s_q)] for pairable in product ]
-        except: permutation = [[]]
+        except: permutation = []
         return permutation
 
     def __build_matrix(self, categories=[], definitions=[]):
@@ -180,6 +180,7 @@ class HMDGenerator(AbstractGenerator):
 
             # compile matrix
             for permutation in self.__permute(category, definition):
+                if not permutation: pass
                 category, definition = permutation
                 matrix.append('\t'.join([
                     '\t'.join(category), # category
