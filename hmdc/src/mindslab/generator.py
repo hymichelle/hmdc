@@ -149,9 +149,10 @@ class HMDGenerator(AbstractGenerator):
             nested =  [ product for product in reduce(lambda x,y:itertools.product(x,y), s_p) ]
             product = map(list, [ self.__flatten(nest) for nest in nested ])
 
-        # pair with categories
-        try: permutation = [ [category, '(%s)' % ')('.join(pairable + s_q)] for pairable in product ]
-        except: permutation = []
+            # pair with categories
+            try: permutation = [ [category, '(%s)' % ')('.join(pairable + s_q)] for pairable in product ]
+            except: permutation = []
+        else: permutation = [[category, definition]]
         return permutation
 
     def __build_matrix(self, categories=[], definitions=[]):
@@ -160,10 +161,12 @@ class HMDGenerator(AbstractGenerator):
         + definitions {list} -- a list of definitions.
         '''
         try: assert bool(categories) and len(categories) == len(definitions)
-        except AssertionError: return
-        matrix = []
+        except AssertionError:
+            debug('b', "data merge bug => check matrix.")
+            sys.exit(1)
 
         # standardize category count
+        matrix = []
         categories_cnt = min(max(map(len, categories)), self.max_categories) # find the smallest
         for i in xrange(len(categories)):
 

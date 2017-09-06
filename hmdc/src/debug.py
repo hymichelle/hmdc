@@ -15,6 +15,7 @@ def debug(category='', message=''):
     c_p = '\033[95m' # purple
     c_g = '\033[92m' # green
     c_r = '\033[91m' # red
+    c_b = '\033[96m' # blue
 
     timestamp = '%s[%s]%s' % (c_w, time.asctime(), c_rst)
     template = ' '.join([timestamp, '%s[%s%s%s] %s'])
@@ -32,6 +33,10 @@ def debug(category='', message=''):
     # WARN
     elif category in ['w', 'warn']:
         sys.stderr.write(template % (c_w, c_r, 'warn', c_w, message))
+
+    # BUG
+    elif category in ['b', 'bug']:
+        sys.stderr.write(template % (c_w, c_b, 'bug', c_w, message))
 
     # default
     else:
