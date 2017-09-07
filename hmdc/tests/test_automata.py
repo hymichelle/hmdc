@@ -71,7 +71,7 @@ class TestAutomata(unittest.TestCase):
         machine.add_state(a)
         machine.add_state(b)
         machine.add_state(c)
-        states = machine.get_transition('A')
+        states = machine.get_transition('B')
         self.assertEqual(states, ['B','C'])
 
     def test_machine_transition_c(self):
