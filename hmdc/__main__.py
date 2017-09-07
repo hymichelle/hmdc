@@ -25,6 +25,7 @@ try:
     # tests
     from tests.test_lexer import TestLexer
     from tests.test_parser import TestParser
+    from tests.test_automata import TestAutomata
     import pickle
 except ImportError as message:
     raise ImportError(message)
@@ -111,7 +112,8 @@ if __name__ == '__main__':
             # load tests
             test_suites, test_cases = [], [
                 TestLexer,
-                TestParser
+                TestParser,
+                TestAutomata
             ]
             for test_case in test_cases:
                 test_suite = unittest.TestLoader().loadTestsFromTestCase(test_case)

@@ -130,7 +130,7 @@ class AbstractParser(object):
             return False
 
         # check valid transition
-        try: return q_e.type in self.grammar.get_transitions(q_s.type)
+        try: return q_e.type in self.grammar.get_transition(q_s.type)
         except: return False
 
     def __consolidate_tokens(self, token):

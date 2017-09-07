@@ -34,36 +34,28 @@ class AbstractAutomataMachine(object):
     # public
     #
 
-    def get_all_states(self):
+    def get_states(self):
         ''' get the state of all automata.
         '''
         return map(lambda x:x.state, self.cache)
 
-    def get_transitions(self, state):
+    def add_state(self, automata):
+        ''' add automata state.
+        + automata {AbstractAutomata} -- an automata.
+        '''
+        if not isinstance(automata, AbstractAutomata): return False
+        else:
+            self.cache.append(automata)
+            return weakref.ref(automata)
+
+    def get_transition(self, state):
         ''' get defined transition(s) for a state in grammar.
         + state {AbstractAutomata} -- a particulra automata.
         '''
         automata = filter(lambda x:x.state == state, self.cache)
         return (automata[0].transition if len(automata) else None)
 
-    def get_all_transitions(self):
+    def get_transitions(self):
         ''' get all possible transitions of automata.
         '''
         return map(lambda x:x.transition, self.cache)
-
-    def set_states(self, machine=[]):
-        ''' override automata with user-input.
-        + states {AbstractAutomataMachine} -- an abstract finite automata.
-        '''
-        if all(map(lambda x:isinstance(x, AbstractAutomata), machine)):
-            self.cache = machine
-        return self.cache == machine
-
-    def add_state(self, automata):
-        ''' add automata state.
-        + automata {AbstractAutomata} -- an automata.
-        '''
-        if not isinstance(automata, AbstractAutomata): return
-        else:
-            self.cache.append(automata)
-            return weakref.ref(automata)
