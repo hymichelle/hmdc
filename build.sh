@@ -31,7 +31,7 @@ debug 'd' "PATH_OUTPUT => '${PATH_OUTPUT}'"
 [ -n "$(which zip)" ] && {
 
   # clean up
-  find "${PATH_SOURCE}" -type f -iname '*.py[co]' -delete
+  find "${PATH_SOURCE}" -type f -iname '*.py[co]' -exec rm -vf "{}" \;
   [ -d "${PATH_BUILD}" ] && {
     rm -rfv "${PATH_BUILD}"
     debug 'w' 'previous build already exists => deleting.. OK'
