@@ -8,7 +8,7 @@ __all__ = [
 ]
 
 __program__ = 'hmdc'
-__version__ = '1.1.6-beta'
+__version__ = '1.1.7-beta'
 __license__ = 'MIT'
 
 __logo__ = r'''
@@ -18,7 +18,7 @@ __logo__ = r'''
  | | | | | | | | | (_| | (__
  |_| |_|_| |_| |_|\__,_|\___|
 
- HMD-Compiler (%s)
+ HMD-Compiler (v%s)
  https://git.io/v5EWW
 
 ''' % (__version__)
