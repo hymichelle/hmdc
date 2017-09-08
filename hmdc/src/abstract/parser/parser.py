@@ -34,14 +34,9 @@ class AbstractParser(object):
         + tokens {list|list[list]} -- list or nested lists of tokens.
         '''
         if not tokens: return []
-
-        # not nested tokens
-        if not any(isinstance(l, list) for l in tokens): self.__parse_definition(tokens)
-
-        # nested tokens
-        else: [ self.__parse_definition(token_block) for token_block in tokens ]
-
-        return self.code
+        if not any(isinstance(l, list) for l in tokens): self.__parse_definition(tokens) # string
+        else: [ self.__parse_definition(token_block) for token_block in tokens ] # nested
+        return self.code or False
 
     #
     # private
@@ -53,12 +48,12 @@ class AbstractParser(object):
         '''
         if len(tokens) < 2:
             debug('w', "PARSER: not enough tokens.\n")
-            return False
+            return
 
         try: line = ''.join([ token.value for token in tokens ])
-        except TypeError:
-            debug('b', '***bug*** invalid value type in token.\n')
-            return False
+        except:
+            debug('b', 'PARSER: ***bug*** invalid value type in tokens.\n')
+            return
 
         if '$' in line:
 
@@ -66,7 +61,7 @@ class AbstractParser(object):
             try: identifiers = set(re.findall('\$[A-Za-z]{1}\w*', line))
             except IndexError:
                 debug('w', "PARSER: variable must be alphanumeric + '_'.\n")
-                return False
+                return
 
             # store/interpolate identifiers
             for v_i in identifiers:
@@ -77,7 +72,7 @@ class AbstractParser(object):
                         self.__parse_tokens(tokens)
                     else:
                         debug('w', "variable '%s' is not defined.\n" % v_i)
-                        return False
+                        return
                 else:
                     try: v_d = tokens[line.index('=')+1:line.index('#')] # upto comment
                     except ValueError: v_d = tokens[line.index('=')+1:] # upto EOL
@@ -98,7 +93,7 @@ class AbstractParser(object):
         '''
         if len(tokens) < 2:
             debug('w', "PARSER ERROR: there must be 2+ tokens to parse into matrix.\n")
-            return False
+            return
 
         self.q_t.append(tokens[0])
         self.__consolidate_tokens(tokens[0])
@@ -109,6 +104,7 @@ class AbstractParser(object):
             # check syntax
             if not self.__is_valid_syntax():
                 self.__throw_syntax_error()
+                return
 
             # consolidate tokens
             self.__consolidate_tokens(token)
@@ -122,11 +118,11 @@ class AbstractParser(object):
         '''
         q_s, q_e = [self.q_t[0], self.q_t[1]] # queue start and end
         if not (q_s or q_e):
-            return False
+            return
 
         # check valid transition
         try: return q_e.type in self.grammar.get_transition(q_s.type)
-        except: return False
+        except: return
 
     def __consolidate_tokens(self, token):
         ''' prototype to build instruction blocks.
@@ -142,7 +138,6 @@ class AbstractParser(object):
         '''
         debug('w', "SYNTAX ERROR: 'next' token is not a valid definition or transition:\n")
         self.__print_stack()
-        return False
 
     #
     # debug
