@@ -110,7 +110,7 @@ class HMDGenerator(AbstractGenerator):
         '''
         try: self.hmd = [ line.strip() for line in lines ]
         except:
-            debug('w', "unable to sanitize input => check input for string type.\n")
+            debug('w', 'GENERATOR: unable to sanitize input for string type.\n')
             sys.exit(1)
 
     def __remove_comments(self):
@@ -162,7 +162,7 @@ class HMDGenerator(AbstractGenerator):
         '''
         try: assert bool(categories) and len(categories) == len(definitions)
         except AssertionError:
-            debug('b', "data merge bug => check matrix.")
+            debug('b', 'GENERATOR: uneven data merge.\n')
             sys.exit(1)
 
         # standardize category count

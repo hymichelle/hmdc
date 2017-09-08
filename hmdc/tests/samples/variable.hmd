@@ -4,3 +4,7 @@ $z=(c)
 A	A	(a)$x
 A	B	(a)$y
 A	C	(a)$z
+A	D	$x
+A	E	$y
+A	F	$z
+A	G	$x$x
