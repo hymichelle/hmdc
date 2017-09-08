@@ -23,7 +23,7 @@ class AbstractParser(object):
         self.q_b = []
 
         # build instruction
-        self.code = deque()
+        self.code = []
 
     #
     # public
@@ -52,49 +52,44 @@ class AbstractParser(object):
         + tokens {list} -- list of tokens from lexer.
         '''
         if len(tokens) < 2:
-            debug('w', "PARSER ERROR: there must be 2+ tokens to parse into matrix.\n")
-            sys.exit(1)
+            debug('w', "PARSER: not enough tokens.\n")
+            return False
 
-        var = "".join([ token.value for token in tokens ])
-        token_peek, token_end = [tokens[0], tokens[-1]]
+        try: line = ''.join([ token.value for token in tokens ])
+        except TypeError:
+            debug('b', '***bug*** invalid value type in token.\n')
+            return False
 
-        # variable
-        if '$' in var:
+        if '$' in line:
 
             # find all unique identifiers
-            try: identifiers = set(map(lambda x:x.strip(), re.findall("\$[A-Za-z]{1}\w*", var)))
+            try: identifiers = set(re.findall('\$[A-Za-z]{1}\w*', line))
             except IndexError:
-                debug('w', "SYNTAX ERROR: variable must be alphanumeric + '_' only.\n")
-                sys.exit(1)
+                debug('w', "PARSER: variable must be alphanumeric + '_'.\n")
+                return False
 
-            # iterate identifiers
+            # store/interpolate identifiers
             for v_i in identifiers:
-
-                # are we interpolating variables?
-                if not '=' in var:
-
-                    # substitute multiple occurances
+                if not '=' in line:
                     if v_i in self.variables.keys():
-                        index = [ x.start() for x in re.finditer('\%s' % v_i, var) ] # escape '\$'
+                        index = [ x.start() for x in re.finditer('\%s' % v_i, line) ] # escape '\$'
                         for i in index: tokens = tokens[:i] + self.variables[v_i] + tokens[i+len(v_i):]
                         self.__parse_tokens(tokens)
                     else:
                         debug('w', "variable '%s' is not defined.\n" % v_i)
-                        sys.exit(1)
-
-                # are we defining new variable?
+                        return False
                 else:
-                    try: v_d = tokens[var.index('=')+1:var.index('#')] # upto comment
-                    except ValueError: v_d = tokens[var.index('=')+1:] # upto EOL
+                    try: v_d = tokens[line.index('=')+1:line.index('#')] # upto comment
+                    except ValueError: v_d = tokens[line.index('=')+1:] # upto EOL
                     self.variables[v_i] = v_d
 
-        # definition
-        elif token_peek.type == 'RULE_BEGIN' and token_end.type == 'RULE_END':
+        # parse definition
+        elif tokens[0].type == 'RULE_BEGIN' and tokens[-1].type == 'RULE_END':
             self.__parse_tokens(tokens)
 
         else:
-            self.q_t.append(token_peek) # debug
-            self.q_t.append(token_end) # debug
+            self.q_t.append(tokens[0]) # debug
+            self.q_t.append(tokens[-1]) # debug
             self.__throw_syntax_error()
 
     def __parse_tokens(self, tokens=[]):
@@ -103,7 +98,7 @@ class AbstractParser(object):
         '''
         if len(tokens) < 2:
             debug('w', "PARSER ERROR: there must be 2+ tokens to parse into matrix.\n")
-            sys.exit(1)
+            return False
 
         self.q_t.append(tokens[0])
         self.__consolidate_tokens(tokens[0])
@@ -147,7 +142,7 @@ class AbstractParser(object):
         '''
         debug('w', "SYNTAX ERROR: 'next' token is not a valid definition or transition:\n")
         self.__print_stack()
-        sys.exit(1)
+        return False
 
     #
     # debug
