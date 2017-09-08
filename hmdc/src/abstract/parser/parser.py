@@ -32,7 +32,7 @@ class AbstractParser(object):
 
     def parse(self, tokens=[]):
         ''' prototype to parse lexed single line string or a list of strings.
-        + tokens {str|list[list]} -- list or nested lists of tokens.
+        + tokens {list|list[list]} -- list or nested lists of tokens.
         '''
         if not tokens: return []
         if not all(isinstance(token, list) for token in tokens): self.eval(tokens) # tokens
@@ -45,13 +45,13 @@ class AbstractParser(object):
         '''
         if len(tokens) < 2 or not all(map(lambda token:isinstance(token, AbstractToken), tokens)):
             debug('w', 'PARSER: not enough tokens or not abstract tokens.\n')
-            self.code = None
+            self.__reset_stack()
             return
 
         try: line = ''.join([ token.value for token in tokens ])
         except:
             debug('b', 'PARSER: invalid value type in tokens.\n')
-            self.code = None
+            self.__reset_stack()
             return
 
         if '$' in line:
@@ -72,7 +72,7 @@ class AbstractParser(object):
                         self.__parse_tokens(tokens)
                     else:
                         debug('w', "variable '%s' is not defined.\n" % v_i)
-                        self.code = None
+                        self.__reset_stack()
                         return
 
         # parse definition
@@ -82,11 +82,13 @@ class AbstractParser(object):
                 self.q_t.append(tokens[0]) # debug
                 self.q_t.append(tokens[-1]) # debug
                 self.__throw_syntax_error()
+                return
 
         else:
             self.q_t.append(tokens[0]) # debug
             self.q_t.append(tokens[-1]) # debug
             self.__throw_syntax_error()
+            return
 
     #
     # private
@@ -96,53 +98,40 @@ class AbstractParser(object):
         ''' prototype to parse tokens and add to code instruction.
         + tokens {list} -- list of tokens from lexer.
         '''
-        if len(tokens) < 2:
-            debug('w', "PARSER ERROR: there must be 2+ tokens to parse into matrix.\n")
-            return
-
         self.q_t.append(tokens[0])
-        self.__consolidate_tokens(tokens[0])
-
+        self.q_b.append(tokens[0])
         for token in tokens[1::]:
-            self.q_t.append(token)
 
             # check syntax
+            self.q_t.append(token)
             if not self.__is_valid_syntax():
                 self.__throw_syntax_error()
                 return
 
-            # consolidate tokens
-            self.__consolidate_tokens(token)
+            # consolidate
+            self.q_b.append(token)
 
         # add instruction
-        self.code.append("".join(self.q_b[:]))
+        self.code.append(''.join(self.q_b[:]))
         self.q_b[:] = [] # clear
 
     def __is_valid_syntax(self):
-        ''' prototype to check for transition correctness.
+        ''' prototype to syntax check.
         '''
-        q_s, q_e = [self.q_t[0], self.q_t[1]] # queue start and end
+        q_s, q_e = self.q_t[0], self.q_t[1] # queue start and end
         if not (q_s or q_e):
-            return
+            return False
 
         # check valid transition
         try: return q_e.type in self.grammar.get_transition(q_s.type)
-        except: return
-
-    def __consolidate_tokens(self, token):
-        ''' prototype to build instruction blocks.
-        '''
-        self.q_b.append(token.value)
-
-    #
-    # error
-    #
+        except: return False
 
     def __throw_syntax_error(self, tokens=[]):
         ''' print syntax error message.
         '''
-        debug('w', "SYNTAX ERROR: 'next' token is not a valid definition or transition:\n")
+        debug('w', 'SYNTAX: incorrect transition:\n')
         self.__print_stack()
+        self.__reset_stack()
 
     #
     # debug
@@ -151,3 +140,7 @@ class AbstractParser(object):
     def __print_stack(self):
         sys.stdout.write("=> curret: %s\n" % (self.q_t[0] or {}) + \
                          "=> next:   %s\n" % (self.q_t[1] or {}))
+
+    def __reset_stack(self):
+        self.code = None
+        self.q_b = []
