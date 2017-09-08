@@ -70,10 +70,8 @@ class AbstractParser(object):
                         stack = [ x.start() for x in re.finditer('\%s' % v_i, line) ]
                         for pop in stack:
                             i = line.index(v_i)
-                            tokens = tokens[:i] +\
-                                     self.variables[v_i] +\
-                                     tokens[i+len(v_i):]
-                            line = ''.join([ token.value for token in tokens ]) # update
+                            tokens = tokens[:i] + self.variables[v_i] + tokens[i+len(v_i):]
+                            line = ''.join([ token.value for token in tokens ]) # update line
                             if not v_i in line: self.__parse_tokens(tokens)
                     else:
                         debug('w', "variable '%s' is not defined.\n" % v_i)
