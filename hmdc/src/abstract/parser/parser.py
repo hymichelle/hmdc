@@ -67,7 +67,7 @@ class AbstractParser(object):
                     self.variables[v_i] = v_d
                 else:
                     if v_i in self.variables.keys():
-                        stack = [ x.start() for x in re.finditer('\%s' % v_i, line) ]
+                        stack = re.findall('\%s' % v_i, line)
                         for pop in stack:
                             i = line.index(v_i)
                             tokens = tokens[:i] + self.variables[v_i] + tokens[i+len(v_i):]
