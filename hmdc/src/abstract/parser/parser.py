@@ -96,7 +96,7 @@ class AbstractParser(object):
         + tokens {list} -- list of tokens from lexer.
         '''
         self.q_t.append(tokens[0])
-        self.q_b.append(tokens[0])
+        self.q_b.append(tokens[0].value)
         for token in tokens[1::]:
 
             # check syntax
@@ -106,7 +106,7 @@ class AbstractParser(object):
                 return
 
             # consolidate
-            self.q_b.append(token)
+            self.q_b.append(token.value)
 
         # add instruction
         self.code.append(''.join(self.q_b[:]))
