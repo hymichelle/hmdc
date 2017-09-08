@@ -73,7 +73,6 @@ class AbstractParser(object):
                     else:
                         debug('w', "variable '%s' is not defined.\n" % v_i)
                         self.__reset_stack()
-                        return
 
         # parse definition
         elif tokens[0].type == 'RULE_BEGIN' and tokens[-1].type == 'RULE_END':
@@ -82,13 +81,11 @@ class AbstractParser(object):
                 self.q_t.append(tokens[0]) # debug
                 self.q_t.append(tokens[-1]) # debug
                 self.__throw_syntax_error()
-                return
 
         else:
             self.q_t.append(tokens[0]) # debug
             self.q_t.append(tokens[-1]) # debug
             self.__throw_syntax_error()
-            return
 
     #
     # private
