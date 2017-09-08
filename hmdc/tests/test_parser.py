@@ -173,3 +173,147 @@ class TestParser(unittest.TestCase):
         tokens = self.lexer.lex(hmd)
         attempt = self.parser._AbstractParser__parse_definition(tokens)
         self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_not(self):
+        hmd = '!'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser._AbstractParser__parse_definition(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_nots(self):
+        hmd = '!!'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser._AbstractParser__parse_definition(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_not_missing_count(self):
+        hmd = '(!)'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser._AbstractParser__parse_definition(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_not_missing_count_nested(self):
+        hmd = '(!())'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser._AbstractParser__parse_definition(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_not_leading_missing_count(self):
+        hmd = '!()'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser._AbstractParser__parse_definition(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_not_trailing_missing_count(self):
+        hmd = '()!'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser._AbstractParser__parse_definition(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_hat(self):
+        hmd = '^'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser._AbstractParser__parse_definition(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_hats(self):
+        hmd = '^^'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser._AbstractParser__parse_definition(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_hat_missing_count(self):
+        hmd = '(^)'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser._AbstractParser__parse_definition(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_hat_missing_count_nested(self):
+        hmd = '(^())'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser._AbstractParser__parse_definition(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_hat_leading_missing_count(self):
+        hmd = '^()'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser._AbstractParser__parse_definition(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_hat_trailing_missing_count(self):
+        hmd = '()^'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser._AbstractParser__parse_definition(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_wildcard(self):
+        hmd = '%'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser._AbstractParser__parse_definition(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_wildcards(self):
+        hmd = '%%'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser._AbstractParser__parse_definition(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_wildcard_missing_count(self):
+        hmd = '(%)'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser._AbstractParser__parse_definition(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_wildcard_missing_count_nested(self):
+        hmd = '(%())'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser._AbstractParser__parse_definition(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_wildcard_leading_missing_count(self):
+        hmd = '%()'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser._AbstractParser__parse_definition(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_wildcard_trailing_missing_count(self):
+        hmd = '()%'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser._AbstractParser__parse_definition(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_or(self):
+        hmd = '|'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser._AbstractParser__parse_definition(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_ors(self):
+        hmd = '||'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser._AbstractParser__parse_definition(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_or_missing_count(self):
+        hmd = '(|)'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser._AbstractParser__parse_definition(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_or_missing_count_nested(self):
+        hmd = '(|())'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser._AbstractParser__parse_definition(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_or_leading_missing_count(self):
+        hmd = '|()'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser._AbstractParser__parse_definition(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_or_trailing_missing_count(self):
+        hmd = '()|'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser._AbstractParser__parse_definition(tokens)
+        self.assertFalse(attempt)
