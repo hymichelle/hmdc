@@ -35,11 +35,15 @@ class AbstractParser(object):
         + tokens {list|list[list]} -- list or nested lists of tokens.
         '''
         if not tokens: return []
-        if not all(isinstance(token, list) for token in tokens): self.eval(tokens) # tokens
-        else: [ self.eval(token) for token in tokens ] # nested tokens
+        if not all(isinstance(token, list) for token in tokens): self.__evaluate(tokens) # tokens
+        else: [ self.__evaluate(token) for token in tokens ] # nested tokens
         return self.code or []
 
-    def eval(self, tokens=[]):
+    #
+    # private
+    #
+
+    def __evaluate(self, tokens=[]):
         ''' prototype to parse single line of tokens.
         + tokens {list} -- list of tokens from lexer.
         '''
@@ -71,7 +75,7 @@ class AbstractParser(object):
                         for pop in stack:
                             i = line.index(v_i)
                             tokens = tokens[:i] + self.variables[v_i] + tokens[i+len(v_i):]
-                            line = ''.join([ token.value for token in tokens ]) # update line
+                            line = ''.join([ token.value for token in tokens ]) # update
                             if not v_i in line: self.__parse_tokens(tokens)
                     else:
                         debug('w', "variable '%s' is not defined.\n" % v_i)
@@ -89,10 +93,6 @@ class AbstractParser(object):
             self.q_t.append(tokens[0]) # debug
             self.q_t.append(tokens[-1]) # debug
             self.__throw_syntax_error()
-
-    #
-    # private
-    #
 
     def __parse_tokens(self, tokens=[]):
         ''' prototype to parse tokens and add to code instruction.
@@ -126,7 +126,7 @@ class AbstractParser(object):
         try: return q_e.type in self.grammar.get_transition(q_s.type)
         except: return False
 
-    def __throw_syntax_error(self, tokens=[]):
+    def __throw_syntax_error(self):
         ''' print syntax error message.
         '''
         debug('w', 'SYNTAX: incorrect transition:\n')
@@ -138,7 +138,7 @@ class AbstractParser(object):
     #
 
     def __print_stack(self):
-        sys.stdout.write("=> curret: %s\n" % (self.q_t[0] or {}) + \
+        sys.stdout.write("=> curret: %s\n" % (self.q_t[0] or {}) +\
                          "=> next:   %s\n" % (self.q_t[1] or {}))
 
     def __reset_stack(self):
