@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from src.abstract.automata.automata import AbstractAutomataMachine
+from src.abstract.lexer.token import AbstractToken
 from src.debug import *
 
 from collections import deque
@@ -30,62 +31,66 @@ class AbstractParser(object):
     #
 
     def parse(self, tokens=[]):
-        ''' prototype to parse single or multiple tokens.
-        + tokens {list|list[list]} -- list or nested lists of tokens.
+        ''' prototype to parse lexed single line string or a list of strings.
+        + tokens {str|list[list]} -- list or nested lists of tokens.
         '''
         if not tokens: return []
-        if not any(isinstance(l, list) for l in tokens): self.__parse_definition(tokens) # string
-        else: [ self.__parse_definition(token_block) for token_block in tokens ] # nested
-        return self.code or False
+        if not all(isinstance(token, list) for token in tokens): self.eval(tokens) # tokens
+        else: [ self.eval(token) for token in tokens ] # nested tokens
+        return self.code or []
 
-    #
-    # private
-    #
-
-    def __parse_definition(self, tokens=[]):
-        ''' prototype to parse single definition tokens.
+    def eval(self, tokens=[]):
+        ''' prototype to parse single line of tokens.
         + tokens {list} -- list of tokens from lexer.
         '''
-        if len(tokens) < 2:
-            debug('w', "PARSER: not enough tokens.\n")
+        if len(tokens) < 2 or not all(map(lambda token:isinstance(token, AbstractToken), tokens)):
+            debug('w', 'PARSER: not enough tokens or not abstract tokens.\n')
+            self.code = None
             return
 
         try: line = ''.join([ token.value for token in tokens ])
         except:
-            debug('b', 'PARSER: ***bug*** invalid value type in tokens.\n')
+            debug('b', 'PARSER: invalid value type in tokens.\n')
+            self.code = None
             return
 
         if '$' in line:
 
             # find all unique identifiers
-            try: identifiers = set(re.findall('\$[A-Za-z]{1}\w*', line))
-            except IndexError:
-                debug('w', "PARSER: variable must be alphanumeric + '_'.\n")
-                return
+            identifiers = set(re.findall('\$[A-Za-z]{1}\w*', line))
 
             # store/interpolate identifiers
             for v_i in identifiers:
-                if not '=' in line:
+                if '=' in line:
+                    try: v_d = tokens[line.index('=')+1:line.index('#')] # upto comment
+                    except ValueError: v_d = tokens[line.index('=')+1:] # upto EOL
+                    self.variables[v_i] = v_d
+                else:
                     if v_i in self.variables.keys():
                         index = [ x.start() for x in re.finditer('\%s' % v_i, line) ] # escape '\$'
                         for i in index: tokens = tokens[:i] + self.variables[v_i] + tokens[i+len(v_i):]
                         self.__parse_tokens(tokens)
                     else:
                         debug('w', "variable '%s' is not defined.\n" % v_i)
+                        self.code = None
                         return
-                else:
-                    try: v_d = tokens[line.index('=')+1:line.index('#')] # upto comment
-                    except ValueError: v_d = tokens[line.index('=')+1:] # upto EOL
-                    self.variables[v_i] = v_d
 
         # parse definition
         elif tokens[0].type == 'RULE_BEGIN' and tokens[-1].type == 'RULE_END':
-            self.__parse_tokens(tokens)
+            try: self.__parse_tokens(tokens)
+            except:
+                self.q_t.append(tokens[0]) # debug
+                self.q_t.append(tokens[-1]) # debug
+                self.__throw_syntax_error()
 
         else:
             self.q_t.append(tokens[0]) # debug
             self.q_t.append(tokens[-1]) # debug
             self.__throw_syntax_error()
+
+    #
+    # private
+    #
 
     def __parse_tokens(self, tokens=[]):
         ''' prototype to parse tokens and add to code instruction.
