@@ -84,7 +84,7 @@ if __name__ == '__main__':
                          default=10,
                          help='set limit to category count (default: 10)')
 
-    # -s: optimize ouptut matrix definitions by sorting the groupings.
+    # -s: optimize ouptut matrix definitions by sorting lines and groupings.
     n_optim.add_argument('-s',
                          action='store_true',
                          default=False,
@@ -105,7 +105,8 @@ if __name__ == '__main__':
     args = aparser.parse_args()
     generator = HMDGenerator(
         max_categories=(args.l or 10),
-        sort_group=(args.s or False)
+        hmd_sorted=(args.s or False),
+        hmd_unique=(args.u or False)
     )
     try:
 

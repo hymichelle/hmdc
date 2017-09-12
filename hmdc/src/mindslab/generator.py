@@ -57,7 +57,10 @@ class HMDGenerator(AbstractGenerator):
     ''' default hierarchial multiple dictionary generator.
     '''
 
-    def __init__(self, max_categories=10, optimization=False, sort_group=False):
+    def __init__(self, max_categories=10,
+                 hmd_optimized=False,
+                 hmd_sorted=False,
+                 hmd_unique=False):
 
         # static
         self.syntax = HMDSyntaxDefault
@@ -69,8 +72,9 @@ class HMDGenerator(AbstractGenerator):
 
         # build options
         self.max_categories = max_categories
-        self.optimization = optimization
-        self.sort_group = sort_group
+        self.hmd_optimized = hmd_optimized
+        self.hmd_sorted = hmd_sorted
+        self.hmd_unique = hmd_unique
 
         # temporary states
         self.hmd = None
@@ -118,7 +122,8 @@ class HMDGenerator(AbstractGenerator):
         '''
         try:
             self.hmd = [ line.strip() for line in lines ]
-            if self.sort_group: self.hmd = sorted(self.hmd) # sort
+            if self.hmd_sorted: self.hmd = sorted(self.hmd) # sort
+            if self.hmd_unique: self.hmd = set(self.hmd) # unique
         except:
             debug('w', 'GENERATOR: unable to sanitize input for string type.\n')
             sys.exit(1)
