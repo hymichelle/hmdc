@@ -122,10 +122,10 @@ class HMDGenerator(AbstractGenerator):
         '''
         try:
             self.hmd = [ line.strip() for line in filter(len, lines) ]
-            if self.hmd_sorted: self.hmd = sorted(self.hmd) # sort
-            if self.hmd_unique: self.hmd = set(self.hmd) # unique
+            if self.hmd_unique: self.hmd = list(set(self.hmd)) # unique
+            if self.hmd_sorted: self.hmd.sort() # sort
         except:
-            debug('w', 'GENERATOR: unable to sanitize input for string type.\n')
+            debug('w', 'GENERATOR: unable to initialize hmd.\n')
             sys.exit(1)
 
     def __remove_comments(self):
