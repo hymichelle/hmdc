@@ -162,7 +162,7 @@ class HMDGenerator(AbstractGenerator):
         # find cartesian product
         if s_p:
             nested =  [ product for product in reduce(lambda x,y:itertools.product(x,y), s_p) ]
-            product = map(list, [ self.__flatten(nest) for nest in nested ])
+            product = map(list, [ self.__flatten(nest) for nest in nested if not isinstance(nest, basestring) ])
 
             # pair with categories
             try: permutation = [ [category, '(%s)' % ')('.join(pairable + s_q)] for pairable in product ]
