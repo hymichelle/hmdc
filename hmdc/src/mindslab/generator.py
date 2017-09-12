@@ -21,6 +21,14 @@ class HMDSchema(object):
         self.category = ['']
         self.definition = ''
 
+    def view(self):
+        ''' view schema.
+        '''
+        return (
+            self.category,
+            self.definition
+        )
+
     def pack(self, line=''):
         ''' pack line into schema.
         '''
@@ -49,7 +57,7 @@ class HMDGenerator(AbstractGenerator):
     ''' default hierarchial multiple dictionary generator.
     '''
 
-    def __init__(self, max_categories=10, optimization=False):
+    def __init__(self, max_categories=10, optimization=False, sort_group=False):
 
         # static
         self.syntax = HMDSyntaxDefault
@@ -62,6 +70,7 @@ class HMDGenerator(AbstractGenerator):
         # build options
         self.max_categories = max_categories
         self.optimization = optimization
+        self.sort_group = sort_group
 
         # temporary states
         self.hmd = None
@@ -86,7 +95,7 @@ class HMDGenerator(AbstractGenerator):
         for hmd in self.hmd:
             schema = HMDSchema()
             if not schema.pack(hmd):
-                debug('w', "GENERATOR: cannot be created into schema: '%s'.\n" % str(hmd))
+                debug('w', "GENERATOR: cannot create schema: '%s'.\n" % hmd)
                 pass
             else: schemas.append(schema)
 
@@ -107,7 +116,9 @@ class HMDGenerator(AbstractGenerator):
         ''' initialize self.hmd with raw lines.
         + lines {list} -- lines to convert from hmd to matrix.
         '''
-        try: self.hmd = [ line.strip() for line in lines ]
+        try:
+            self.hmd = [ line.strip() for line in lines ]
+            if self.sort_group: self.hmd = sorted(self.hmd) # sort
         except:
             debug('w', 'GENERATOR: unable to sanitize input for string type.\n')
             sys.exit(1)

@@ -103,7 +103,10 @@ if __name__ == '__main__':
                         help="run tests (default: off)")
 
     args = aparser.parse_args()
-    generator = HMDGenerator()
+    generator = HMDGenerator(
+        max_categories=(args.l or 10),
+        sort_group=(args.s or False)
+    )
     try:
 
         # run tests
