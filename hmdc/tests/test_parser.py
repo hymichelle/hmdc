@@ -317,3 +317,75 @@ class TestParser(unittest.TestCase):
         tokens = self.lexer.lex(hmd)
         attempt = self.parser.parse(tokens)
         self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_identifier(self):
+        hmd = '$'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser.parse(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_identifiers(self):
+        hmd = '$$'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser.parse(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_identifier_missing_count(self):
+        hmd = '($)'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser.parse(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_identifier_missing_count_nested(self):
+        hmd = '($())'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser.parse(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_identifier_leading_missing_count(self):
+        hmd = '$()'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser.parse(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_identifier_trailing_missing_count(self):
+        hmd = '()$'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser.parse(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_assignment(self):
+        hmd = '='
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser.parse(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_assignments(self):
+        hmd = '=='
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser.parse(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_assignment_missing_count(self):
+        hmd = '(=)'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser.parse(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_assignment_missing_count_nested(self):
+        hmd = '(=())'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser.parse(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_assignment_leading_missing_count(self):
+        hmd = '=()'
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser.parse(tokens)
+        self.assertFalse(attempt)
+
+    def test_parser_invalid_syntax_assignment_trailing_missing_count(self):
+        hmd = '()='
+        tokens = self.lexer.lex(hmd)
+        attempt = self.parser.parse(tokens)
+        self.assertFalse(attempt)
