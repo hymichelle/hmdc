@@ -85,9 +85,10 @@ class HMDGenerator(AbstractGenerator):
         schemas = []
         for hmd in self.hmd:
             schema = HMDSchema()
-            if schema.pack(hmd):
-                schemas.append(schema)
-            else: pass
+            if not schema.pack(hmd):
+                debug('w', 'GENERATOR: cannot be created into schema: %s' % str(hmd))
+                pass
+            else: schemas.append(schema)
 
         # categories must be length-filtered due to variables
         categories = filter(len, [ schema.category for schema in schemas ])
