@@ -18,8 +18,8 @@ class HMDSchema(object):
     '''
 
     def __init__(self):
-        self.category = ['']
-        self.definition = ''
+        self.category = None
+        self.definition = None
 
     def view(self):
         ''' view schema.
@@ -33,7 +33,7 @@ class HMDSchema(object):
         ''' pack line into schema.
         '''
         if not line: return
-        if any([x in line for x in ['$','=']]):
+        if all([x in line for x in ['$', '=']]):
             self.definition = line
             return True
         else:
@@ -104,7 +104,7 @@ class HMDGenerator(AbstractGenerator):
             else: schemas.append(schema)
 
         # categories must be length-filtered due to variables
-        categories = filter(len, [ schema.category for schema in schemas ])
+        categories = [ schema.category for schema in schemas if schema.category ]
         definitions = [ schema.definition for schema in schemas ]
 
         # parse and generate matrix
@@ -121,7 +121,7 @@ class HMDGenerator(AbstractGenerator):
         + lines {list} -- lines to convert from hmd to matrix.
         '''
         try:
-            self.hmd = [ line.strip() for line in lines ]
+            self.hmd = [ line.strip() for line in filter(len, lines) ]
             if self.hmd_sorted: self.hmd = sorted(self.hmd) # sort
             if self.hmd_unique: self.hmd = set(self.hmd) # unique
         except:
@@ -177,7 +177,9 @@ class HMDGenerator(AbstractGenerator):
         '''
         try: assert bool(categories) and len(categories) == len(definitions)
         except AssertionError:
-            debug('w', 'GENERATOR: merged data is not even weight.\n')
+            debug('w', 'GENERATOR: merging not possible:\n')
+            debug('d', 'category   -> %i\n' % len(categories))
+            debug('d', 'definition -> %i\n' % len(definitions))
             sys.exit(1)
 
         # standardize category count

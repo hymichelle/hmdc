@@ -137,7 +137,7 @@ if __name__ == '__main__':
                 debug('w', "file '%s' does not exist.\n" % args.f)
                 sys.exit(1)
             with open(args.f, 'r') as f:
-                c = filter(len, f.read().split('\n'))
+                c = f.read().split('\n')
             result = generator.generate(c)
 
         # output to file
