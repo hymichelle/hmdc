@@ -14,39 +14,36 @@ import sys
 import re
 
 class HMDSchema(object):
-    ''' an abstract schema for a valid hmd line.
+    ''' an abstract hmd schema.
     '''
 
-    def __init__(self, category=[], definition=''):
-
-        # static
-        self.syntax = HMDSyntaxDefault
-
-        # state
-        self.category = category
-        self.definition = definition
+    def __init__(self):
+        self.category = ['']
+        self.definition = ''
 
     def pack(self, line=''):
-        ''' extract a line into hmd schema.
+        ''' pack line into schema.
         '''
-        if not line:
-            self.category = []
-            self.definition = ''
-            return
-
-        identifier = self.syntax.get('VARIABLE_IDENTIFIER', '$') # default
-        if identifier not in line:
+        if not line: return
+        if any([x in line for x in ['$','=']]):
+            self.definition = line
+            return True
+        else:
             tokens = line.split('\t')
+            if len(tokens) < 2: return
             self.category = tokens[:-1]
             self.definition = tokens[-1]
-        else:
-            self.category = ['']
-            self.definition = line
+            return True
+        return
 
     def unpack(self):
-        ''' unpack a line into category and definition.
+        ''' unpack schema into line.
         '''
-        return (self.category, self.definition)
+        try: line = '\t'.join(self.category, self.definition)
+        except:
+            line = ''
+            debug('w', 'incorrect schema structure => defaulting to empty schema.\n')
+        return line
 
 class HMDGenerator(AbstractGenerator):
     ''' default hierarchial multiple dictionary generator.
@@ -88,8 +85,9 @@ class HMDGenerator(AbstractGenerator):
         schemas = []
         for hmd in self.hmd:
             schema = HMDSchema()
-            schema.pack(hmd)
-            schemas.append(schema)
+            if schema.pack(hmd):
+                schemas.append(schema)
+            else: pass
 
         # categories must be length-filtered due to variables
         categories = filter(len, [ schema.category for schema in schemas ])
@@ -162,7 +160,7 @@ class HMDGenerator(AbstractGenerator):
         '''
         try: assert bool(categories) and len(categories) == len(definitions)
         except AssertionError:
-            debug('b', 'GENERATOR: uneven data merge.\n')
+            debug('w', 'GENERATOR: merged data is not even weight.\n')
             sys.exit(1)
 
         # standardize category count
