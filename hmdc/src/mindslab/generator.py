@@ -86,7 +86,7 @@ class HMDGenerator(AbstractGenerator):
         for hmd in self.hmd:
             schema = HMDSchema()
             if not schema.pack(hmd):
-                debug('w', 'GENERATOR: cannot be created into schema: %s' % str(hmd))
+                debug('w', "GENERATOR: cannot be created into schema: '%s'.\n" % str(hmd))
                 pass
             else: schemas.append(schema)
 
