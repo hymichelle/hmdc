@@ -39,7 +39,9 @@ class HMDGrammar(object):
                     'SPACE',
                     'RULE_END',
                     'GRAMMAR_OR',
+                    'GRAMMAR_WILD',
                     'VARIABLE_ASSIGNMENT',
+                    'MATCH_ALWAYS',
                     'MATCH_NOT'
                 ]
             )
