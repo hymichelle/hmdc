@@ -101,6 +101,18 @@ B (b)
 C (c)
 ```
 
+In addition, sorting also takes place inside the lists to improve legibility:
+
+```bash
+# before
+A	(b|a)(e|@d|c)
+B	(a)(b)(z|x|y)
+
+# after
+A	(a|b)(@d|c|e)
+B	(a)(b)(x|y|z)
+```
+
 ## Unique
 
 If you accidentally copy-and-paste identical rules, you can set **hmdc** to de-dup the results using [unique](https://github.com/initbar/hmdc/blob/388fb0b30b0b452351efcba762ba27b9aceead81/hmdc/__main__.py#L93-L97) flag:
