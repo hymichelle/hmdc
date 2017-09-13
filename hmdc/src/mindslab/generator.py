@@ -159,6 +159,9 @@ class HMDGenerator(AbstractGenerator):
             if '|' in block: s_p.append(block.split('|'))
             else: s_q.append(block)
 
+        # hmd optimization
+        if self.hmd_sorted: s_p = map(sorted, s_p)
+
         # find cartesian product
         if s_p:
             nested =  [ product for product in reduce(lambda x,y:itertools.product(x,y), s_p) ]
