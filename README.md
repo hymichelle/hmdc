@@ -41,6 +41,10 @@
 
 See [syntax](./SYNTAX.md).
 
+## Example
+
+See [example](./EXAMPLE.md).
+
 ## Design
 
 **hmdc** is a modified compiler, which has similarities to conventional compilers. All user input goes into `FACTORY`, a singleton-wrapper instance that spawns and dies with the program's lifetime, and outputs as compiled matrix:
