@@ -184,14 +184,14 @@ class HMDGenerator(AbstractGenerator):
 
         # standardize category count
         matrix = []
-        categories_cnt = min(max(map(len, categories)), self.max_categories) # find the smallest
+        min_categories = min(min(map(len, categories)), self.max_categories) # find the smallest
         for i in xrange(len(categories)):
 
             # schema
             category, definition = categories[i], definitions[i]
 
             # normalize category count
-            deviation = int(len(category) - categories_cnt)
+            deviation = int(len(category) - min_categories)
             distance = 0 - deviation # distance from origin
             if deviation >= 0: category.extend([''] * distance)
             else:
