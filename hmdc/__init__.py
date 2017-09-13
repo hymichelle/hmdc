@@ -8,7 +8,7 @@ __all__ = [
 ]
 
 __program__ = 'hmdc'
-__version__ = '1.4.1-beta'
+__version__ = '1.4.2-beta'
 __license__ = 'MIT'
 
 __logo__ = r'''

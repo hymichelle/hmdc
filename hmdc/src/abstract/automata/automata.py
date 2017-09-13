@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-from collections import deque
-
 import weakref
 
 class AbstractAutomata(object):
@@ -25,7 +23,7 @@ class AbstractAutomataMachine(object):
     '''
 
     def __init__(self):
-        self.cache = deque()
+        self.cache = []
 
     def __len__(self):
         return len(self.cache)
@@ -37,7 +35,7 @@ class AbstractAutomataMachine(object):
     def get_states(self):
         ''' get the state of all automata.
         '''
-        return map(lambda x:x.state, self.cache)
+        return [ automata.state for automata in self.cache ]
 
     def add_state(self, automata):
         ''' add automata state.
@@ -53,9 +51,9 @@ class AbstractAutomataMachine(object):
         + state {AbstractAutomata} -- a particulra automata.
         '''
         automata = filter(lambda x:x.state == state, self.cache)
-        return (automata[0].transition if len(automata) else None)
+        return (automata[0].transition if len(automata) else '')
 
     def get_transitions(self):
         ''' get all possible transitions of automata.
         '''
-        return map(lambda x:x.transition, self.cache)
+        return [ automata.transition for automata in self.cache ]
