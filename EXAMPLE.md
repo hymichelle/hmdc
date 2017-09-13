@@ -47,6 +47,28 @@ M N	$x$x
 O P	$x$y$z
 ```
 
+You don't need to declare everything on the top. **hmdc** is flexible that you can declare variables on-the-go:
+
+```bash
+$x=(a)
+A B	(a)$x
+G H	$x
+
+$y=(b)
+C D	(a)$y
+I J	$y
+
+$z=(c)
+E F	(a)$z
+K L	$z
+
+M N	$x$x
+O P	$x$y$z
+
+# but below will throw an exception
+Q R   $s
+```
+
 ## Spaces
 
 Rules can be declared with arbitrary number of leading and trailing spaces/tabs:
