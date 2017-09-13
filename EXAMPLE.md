@@ -1,10 +1,10 @@
 # Example
 
-Below are some examples of new and existing valid HMD syntax:
+Below are some examples of new HMD features:
 
 ## Schema
 
-There can be arbitrary number of categories. However, you can [declare a limit](https://github.com/initbar/hmdc/blob/388fb0b30b0b452351efcba762ba27b9aceead81/hmdc/__main__.py#L78-L85) and manually override the category counts:
+There can be arbitrary number of categories. However, you can [declare a limit](https://github.com/initbar/hmdc/blob/388fb0b30b0b452351efcba762ba27b9aceead81/hmdc/__main__.py#L78-L85) and manually override the total category number:
 
 ```
 (category)  ..  (category)	(definition)
@@ -24,14 +24,14 @@ C    D  (e)
 
 #
 ##
-### comments also be nested.
+### comments can also be nested.
 ##
 #
 ```
 
 ## Variable
 
-When declaring a variable, there should not be space between identifier and declaration.
+When declaring a variable, there should be no space between identifier and declaration.
 
 ```bash
 $x=(a)
